@@ -40,7 +40,18 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 }
-
+@theme {
+  --color-newblack500: #6e7191;
+  --color-newblack800: #14142a;
+  --color-newblack200: #eff0f6;
+  --color-primaryMain: #034ea2;
+}
+.rtl {
+  direction: rtl;
+}
+.ltr {
+  direction: ltr;
+}
 :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);
@@ -74,6 +85,8 @@
   --sidebar-accent-foreground: oklch(0.21 0.034 264.665);
   --sidebar-border: oklch(0.928 0.006 264.531);
   --sidebar-ring: oklch(0.707 0.022 261.325);
+  --sidebar-ring: oklch(0.707 0.022 261.325);
+  --newBlack: oklch(38.777% 0.15239 28.3);
 }
 
 .dark {
