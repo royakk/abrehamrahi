@@ -1,7 +1,0 @@
-#root {
-  display: flex; /* Enable Flexbox */
-  align-items: center; /* Center items horizontally */
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center; /* Center text inside the items */
-}

@@ -4,13 +4,15 @@ import { MenoLogin } from "@/components/login/menu";
 
 export const Login = () => {
   return (
-    <div className="grid grid-cols-5 gap-40  justify-center items-center">
-      <div className="col-span-3">
-        <LoginImage />
-        <MenoLogin />
-      </div>
-      <div className="col-span-2">
-        <LoginCard />
+    <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="container grid w-full grid-cols-1 lg:grid-cols-2 items-center !p-0 lg:gap-16 max-w-5xl">
+        <div className="hidden lg:block">
+          <LoginImage />
+          <MenoLogin />
+        </div>
+        <div className="flex justify-center w-full">
+          <LoginCard />
+        </div>
       </div>
     </div>
   );
