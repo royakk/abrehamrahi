@@ -98,27 +98,33 @@ export const OtpCode = () => {
 
   return (
     <div>
-      <div className="flex gap-2 rtl">
-        <button
-          className="text-gray-500 cursor-pointer"
-          tabIndex={-1}
-          onClick={() => goToStep("number")}
-        >
-          <img src="./arrow-left.png" />
-        </button>
-        <h1 className="flex rtl text-[22px] font-bold text-newblack800 mb-4">
-          تائید شماره موبایل
-        </h1>
+      <div className="flex flex-col gap-4">
+        <div className=" flex text-center  items-center  gap-3 rtl">
+          <button
+            onClick={() => goToStep("number")}
+            className="  text-gray-500 cursor-pointer"
+            tabIndex={-1}
+          >
+            <img src="./arrow-left.png" />
+          </button>
+          <h1 className="flex rtl text-[22px] font-bold text-newblack800 ">
+            تائید شماره موبایل
+          </h1>
+        </div>
+        <h2 className="flex rtl text-[14px] font-bold text-newblack500 mb-8">
+          لطفا کد ۴ رقمی ارسال شده به شماره{" "}
+          <span className="text-sm text-primaryMain mx-1">{user.phone} </span>را
+          وارد کنید.
+        </h2>
       </div>
-      <h2 className="flex rtl text-[14px] font-bold text-newblack500 mb-10">
-        لطفا کد ۴ رقمی ارسال شده به شماره {user.phone} را وارد کنید.
-      </h2>
-
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex justify-center items-center gap-4 mb-5">
           <Controller
             name="code"
             control={control}
+            rules={{
+              required: "شماره موبایل الزامی است",
+            }}
             render={({ field, fieldState }) => (
               <div className="flex flex-col items-center gap-1">
                 <InputOTP
@@ -145,8 +151,8 @@ export const OtpCode = () => {
           />
         </div>
 
-        <Button type="submit" className="mt-4 w-full bg-primaryMain h-[48px]">
-          ورود
+        <Button type="submit" className="mt-5 w-full bg-primaryMain h-[48px]">
+          تایید کد ارسالی
         </Button>
 
         <div className="flex gap-2 rtl  my-3 text-sm">
@@ -167,11 +173,11 @@ export const OtpCode = () => {
           )}
         </div>
 
-        <div className="flex my-4 rtl gap-1 ">
-          <img src="./sms.png" />
+        <div className="flex items-center  rtl gap-2 ">
+          <img src="./unlock.png" />
           <p
             onClick={() => goToStep("password")}
-            className="text-primaryMain text-[14px] cursor-pointer"
+            className="text-primaryMain font-medium  text-[14px] cursor-pointer"
           >
             ورود با رمز عبور
           </p>

@@ -19,8 +19,8 @@ export const generateCode = async (user: GenerateCode) => {
 
   return res.data;
 };
-export const validateOtp = async (user: GenerateCode) => {
-  const res = await httpRequest.post("v6/profile/auth/validate-otp/", user);
+export const getProfile = async () => {
+  const res = await httpRequest.get("v6/profile/auth/get-profile/");
 
   return res.data;
 };

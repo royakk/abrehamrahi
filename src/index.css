@@ -88,7 +88,9 @@
   --color-newblack500: #6e7191;
   --color-newblack800: #14142a;
   --color-newblack200: #eff0f6;
+  --color-newblack400: #a0a3bd;
   --color-primaryMain: #034ea2;
+  --color-red200: #ea0000;
 }
 .rtl {
   direction: rtl;

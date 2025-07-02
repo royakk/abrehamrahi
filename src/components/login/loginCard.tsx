@@ -15,9 +15,9 @@ const LoginFlow = () => {
 
   return (
     <div>
-      <Card className="w-[488px] shadow-none   px-[59px] py-8">
-        <CardHeader className="rtl mb-5 p-0">
-          <div style={{ display: "flex", gap: "8px" }}>
+      <Card className="w-[376px] sm:w-[488px] shadow-none px-4  md:px-[59px] py-8">
+        <CardHeader className="rtl mb-6 !p-0">
+          <div style={{ display: "flex" }}>
             <img src="./Group.png" alt="Group" />
             <img src="./abr.png" alt="ABR" />
           </div>

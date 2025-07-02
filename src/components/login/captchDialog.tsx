@@ -71,16 +71,16 @@ export const CaptchDialog = () => {
   };
   return (
     <div>
-      <Dialog open={showCaptch} onOpenChange={(open) => setShowCaptcha(open)}>
-        <DialogContent className="sm:max-w-md px-10 ltr ">
+      <Dialog open={true} onOpenChange={(open) => setShowCaptcha(open)}>
+        <DialogContent className="w-[376px] sm:w-[488px] px-[29px] sm:px-[59px] py-8 ltr ">
           <DialogHeader className="text-left">
-            <DialogDescription className="text-right">
-              کلمات تصویر را وارد کنید
+            <DialogDescription className="text-right text-[16px] text-newblack500">
+              :کلمات تصویر را وارد کنید
             </DialogDescription>
           </DialogHeader>
 
           <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="flex items-center gap-2 ">
+            <div className="flex items-center gap-3 ">
               <button onClick={() => fetchCaptcha()} type="button">
                 <img src="./refresh-2.png" alt="refresh" />
               </button>
@@ -110,11 +110,12 @@ export const CaptchDialog = () => {
                     <Input
                       {...field}
                       id="captch"
-                      className={`ltr h-[40px] w-[190px] pr-10 `}
+                      className={`ltr h-[40px] sm:w-[189px] pr-10 `}
+                      error={!!fieldState}
                     />
 
                     {fieldState.error && (
-                      <p className="text-sm flex rtl p-0 text-red-500">
+                      <p className="text-sm flex rtl p-0 min-w-[] text-red-500">
                         {fieldState.error.message}
                       </p>
                     )}

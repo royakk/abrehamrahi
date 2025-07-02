@@ -73,10 +73,12 @@ export const NumberPart = () => {
                 شماره موبایل
               </Label>
               <Input
+                className={`ltr bg-newblack200
+              `}
+                error={!!fieldState}
                 type="text"
                 id="phone"
                 placeholder="09** *** ***"
-                error={!!fieldState.error}
                 {...field}
               />
               {fieldState.error && (
