@@ -1,6 +1,12 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+@font-face {
+  font-family: "yekan";
+  src: url("./fonts/Yekan.ttf") format("ttf");
+  font-weight: normal;
+  font-style: normal;
+}
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {

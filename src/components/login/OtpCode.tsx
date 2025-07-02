@@ -10,9 +10,9 @@ import { useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { useLoginContext } from "@/lib/loginContext";
-import { generateCode, login } from "@/services/login";
 import { useEffect, useState } from "react";
 import { httpRequest } from "@/services/http";
+import { generateCode, login } from "@/services/authorisation";
 
 type OtpRequest = {
   captcha_id: string;
@@ -28,12 +28,7 @@ export const OtpCode = () => {
   const [countdown, setCountdown] = useState(10);
   const [isTimerActive, setIsTimerActive] = useState(true);
   const navigate = useNavigate();
-  const {
-    control,
-    handleSubmit,
-    setError,
-    formState: { errors },
-  } = useForm<OtpRequest>({
+  const { control, handleSubmit, setError } = useForm<OtpRequest>({
     defaultValues: {
       phone: "",
       prefix: "+98",
@@ -55,7 +50,7 @@ export const OtpCode = () => {
   const handleResendCode = async () => {
     try {
       const res = await generateCode({
-        phone: user.phone,
+        phone: user.phone || "",
         prefix: "+98",
       });
       if (res.captcha_required !== null) {

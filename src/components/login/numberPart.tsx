@@ -3,15 +3,15 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import { useLoginContext, type User } from "@/lib/loginContext";
-import { generateCode } from "@/services/login";
 import { isPast } from "@/lib/utils";
+import { generateCode } from "@/services/authorisation";
 export type GenerateCode = {
   phone: string;
-  request_type: number;
+  request_type?: number;
   prefix: string;
-  captcha_value: string;
-  captcha_proivider: string;
-  captcha_id: string;
+  captcha_value?: string;
+  captcha_proivider?: string;
+  captcha_id?: string;
 };
 export const NumberPart = () => {
   const { setUser, setShowCaptcha, goToStep } = useLoginContext();
