@@ -6,8 +6,8 @@ import { Eye, EyeOff } from "lucide-react";
 import { useForm, Controller } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
 import { useLoginContext, type User } from "@/lib/loginContext";
-import { login } from "@/services/login";
 import { useNavigate } from "react-router-dom";
+import { login } from "@/services/authorisation";
 
 type PasswordRequest = {
   country: string;
@@ -20,12 +20,7 @@ export const PasswordPart = () => {
   const [showPassword, setShowPassword] = useState(false);
   const { goToStep, setUser, user, setShowCaptcha } = useLoginContext();
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-    setError,
-  } = useForm<PasswordRequest>({
+  const { control, handleSubmit, setError } = useForm<PasswordRequest>({
     defaultValues: {
       country: "IR",
       password: "",

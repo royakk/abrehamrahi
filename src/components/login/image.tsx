@@ -1,6 +1,6 @@
 export const LoginImage = () => {
   return (
-    <div className="bg">
+    <div>
       <img
         width={664}
         height={486}

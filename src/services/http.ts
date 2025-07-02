@@ -44,9 +44,12 @@ axiosInstance.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        const response = await axios.post(`${BASE_URL}/auth/token-refresh`, {
-          refresh: getRefreshToken(),
-        });
+        const response = await axios.post(
+          `${BASE_URL}v2/profile/auth/token-refresh/`,
+          {
+            refresh: getRefreshToken(),
+          }
+        );
 
         const newAccessToken = response.data.access;
         const newRefreshToken = response.data.refres;

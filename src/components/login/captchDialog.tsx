@@ -110,9 +110,7 @@ export const CaptchDialog = () => {
                     <Input
                       {...field}
                       id="captch"
-                      className={`ltr h-[40px] w-[190px] pr-10 ${
-                        fieldState.error ? "border-red-500" : ""
-                      }`}
+                      className={`ltr h-[40px] w-[190px] pr-10 `}
                     />
 
                     {fieldState.error && (

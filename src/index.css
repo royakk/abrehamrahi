@@ -2,10 +2,48 @@
 @import "tw-animate-css";
 
 @font-face {
-  font-family: "yekan";
-  src: url("./fonts/Yekan.ttf") format("ttf");
-  font-weight: normal;
+  font-family: "IRANYekanWebFn";
+  src: url("./assets/fonts/YekanBakhFa/iranyekanwebboldfanum.ttf") format("ttf");
+
+  font-weight: bold;
   font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "IRANYekanWebFn";
+  src: url("./assets/fonts/YekanBakhFa/iranyekanwebmediumfanum.ttf")
+    format("ttf");
+
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "IRANYekanWebFn";
+  src: url("./assets/fonts/YekanBakhFa/iranyekanwebregularfanum.ttf")
+    format("ttf");
+
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "IRANYekanWebFn";
+  src: url("./assets/fonts/YekanBakhFa/iranyekanweblightfanum.ttf")
+    format("ttf");
+
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "IRANYekanWebFn";
+  src: url("./assets/fonts/YekanBakhFa/iranyekanwebblackfanum.ttf")
+    format("ttf");
+
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
 }
 @custom-variant dark (&:is(.dark *));
 
@@ -135,5 +173,6 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: "IRANYekanWebFn";
   }
 }
