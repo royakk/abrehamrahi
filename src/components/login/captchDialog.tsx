@@ -11,6 +11,8 @@ import { Input } from "../ui/input";
 import { http } from "@/services/http";
 import { useLoginContext, type User } from "@/lib/loginContext";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
+import { DialogClose } from "@radix-ui/react-dialog";
+import { X } from "lucide-react";
 
 interface CaptchaResponse {
   image: string;
@@ -74,10 +76,10 @@ export const CaptchDialog = () => {
   };
   return (
     <div>
-      <Dialog open={showCaptch}>
-        <DialogContent className="sm:max-w-md px-10 ">
-          <DialogHeader className="rtl">
-            <DialogDescription style={{ right: 0 }}>
+      <Dialog open={showCaptch} onOpenChange={(open) => setShowCaptcha(open)}>
+        <DialogContent className="sm:max-w-md px-10 ltr ">
+          <DialogHeader className="text-left">
+            <DialogDescription className="text-right">
               کلمات تصویر را وارد کنید
             </DialogDescription>
           </DialogHeader>
@@ -102,7 +104,7 @@ export const CaptchDialog = () => {
                 name="captcha_value"
                 control={control}
                 rules={{
-                  required: "کد اشتباه است، لطفا دوباره تلاش کنید",
+                  required: "کد  کپچا الزامی است",
                   minLength: {
                     value: 5,
                     message: "کپچا  باید  5 کاراکتر باشد",
@@ -119,7 +121,7 @@ export const CaptchDialog = () => {
                     />
 
                     {fieldState.error && (
-                      <p className="text-sm flex items-start p-0 text-red-500">
+                      <p className="text-sm flex rtl p-0 text-red-500">
                         {fieldState.error.message}
                       </p>
                     )}
@@ -133,13 +135,6 @@ export const CaptchDialog = () => {
                 className="mt-4 bg-primaryMain h-[48px] w-full"
               >
                 ادامه
-              </Button>
-              <Button
-                variant={"ghost"}
-                className="mt-4 h-[48px] w-full"
-                onClick={() => setShowCaptcha(false)}
-              >
-                لغو
               </Button>
             </DialogFooter>
           </form>

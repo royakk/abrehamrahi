@@ -49,10 +49,11 @@ export const NumberPart = () => {
       } else {
         goToStep("otp");
       }
-
-      console.log("✅ API success:", res.data);
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      const { captcha_required } = error.response.data;
+      if (captcha_required !== null) {
+        setShowCaptcha(true);
+      }
     }
     // }
   };

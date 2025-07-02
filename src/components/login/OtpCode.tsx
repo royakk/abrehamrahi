@@ -90,9 +90,13 @@ export const OtpCode = () => {
 
       navigate("/profile");
     } catch (error: any) {
+      const { captcha_required } = error.response.data;
+      if (captcha_required !== null) {
+        setShowCaptcha(true);
+      }
       setError("code", {
         type: "manual",
-        message: "کد وارد شده نادرست است.",
+        message: "کد وارد شده نادرست است",
       });
     }
   };

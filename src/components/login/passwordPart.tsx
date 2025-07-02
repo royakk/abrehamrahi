@@ -48,6 +48,10 @@ export const PasswordPart = () => {
         navigate("/profile");
       }
     } catch (error: any) {
+      const { captcha_required } = error.response.data;
+      if (captcha_required !== null) {
+        setShowCaptcha(true);
+      }
       setError("password", {
         type: "manual",
         message: "رمز عبور شما اشتباه هست، لطفا دوباره تلاش کنید",

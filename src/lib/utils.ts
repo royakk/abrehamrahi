@@ -8,5 +8,5 @@ export function isPast(): boolean {
   const timestamp = localStorage.getItem("captchaTime");
   const givenDate = new Date(Number(timestamp) * 1000);
   const now = new Date();
-  return now < givenDate;
+  return now > givenDate;
 }
