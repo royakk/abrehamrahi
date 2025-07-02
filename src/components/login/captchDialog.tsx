@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -26,7 +25,7 @@ interface CaptchaRequest {
 }
 export const CaptchDialog = () => {
   const [src, setSrc] = useState<string | null>(null);
-  const { showCaptch, user, setUser, step, goToStep, setShowCaptcha } =
+  const { showCaptch, user, setUser, goToStep, setShowCaptcha } =
     useLoginContext();
   const fetchCaptcha = async () => {
     try {
@@ -42,11 +41,12 @@ export const CaptchDialog = () => {
   };
   useEffect(() => {
     fetchCaptcha();
-  }, []);
+  }, [showCaptch]);
 
   const {
     control,
     handleSubmit,
+    resetField,
     formState: { errors },
   } = useForm<CaptchaRequest>({
     defaultValues: {
@@ -64,10 +64,10 @@ export const CaptchDialog = () => {
         phone: user.phone,
         captcha_id: user.captcha_id,
       });
-      if (step === "number") {
-        goToStep("otp");
-        setShowCaptcha(false);
-      }
+
+      goToStep("otp");
+      setShowCaptcha(false);
+      resetField("captcha_value");
     } catch (error) {
       alert(error);
     }
@@ -80,7 +80,6 @@ export const CaptchDialog = () => {
             <DialogDescription style={{ right: 0 }}>
               کلمات تصویر را وارد کنید
             </DialogDescription>
-            <DialogClose asChild>X</DialogClose>
           </DialogHeader>
 
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -134,6 +133,13 @@ export const CaptchDialog = () => {
                 className="mt-4 bg-primaryMain h-[48px] w-full"
               >
                 ادامه
+              </Button>
+              <Button
+                variant={"ghost"}
+                className="mt-4 h-[48px] w-full"
+                onClick={() => setShowCaptcha(false)}
+              >
+                لغو
               </Button>
             </DialogFooter>
           </form>

@@ -5,6 +5,7 @@ import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import { http } from "@/services/http";
 import { useLoginContext, type User } from "@/lib/loginContext";
 import { generateCode } from "@/services/login";
+import { isPast } from "@/lib/utils";
 export type GenerateCode = {
   phone: string;
   request_type: number;
@@ -29,12 +30,13 @@ export const NumberPart = () => {
 
   const onSubmit: SubmitHandler<GenerateCode> = async (data) => {
     const phone = data.phone.startsWith("0") ? data.phone.slice(1) : data.phone;
-
+    // if (isPast()) {
+    //   setShowCaptcha(true);
+    // } else {
     setUser((prevUser: User) => ({
       ...prevUser,
       phone: phone,
     }));
-
     try {
       const res = await generateCode({
         ...data,
@@ -49,7 +51,10 @@ export const NumberPart = () => {
       }
 
       console.log("✅ API success:", res.data);
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
+    // }
   };
   return (
     <div>

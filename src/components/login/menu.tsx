@@ -7,8 +7,7 @@ export const MenoLogin = ({ sm = false }: MenoLoginProps) => {
     <div>
       <ul
         style={{ direction: "rtl" }}
-        className={`flex gap-5 p-4 justify-center items-center ${
-          sm ? "text-sm" : "text-xl"
+        className={`flex gap-5 p-4 justify-center items-center  text-sm "
         } text-newblack500`}
       >
         <li>خانه</li>

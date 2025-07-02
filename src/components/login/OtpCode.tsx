@@ -24,12 +24,11 @@ type OtpRequest = {
 };
 
 export const OtpCode = () => {
-  const { user, goToStep, setUser } = useLoginContext();
-  const [countdown, setCountdown] = useState(60);
+  const { user, goToStep, setShowCaptcha } = useLoginContext();
+  const [countdown, setCountdown] = useState(10);
   const [isTimerActive, setIsTimerActive] = useState(true);
   const navigate = useNavigate();
   const {
-    getValues,
     control,
     handleSubmit,
     setError,
@@ -55,16 +54,22 @@ export const OtpCode = () => {
 
   const handleResendCode = async () => {
     try {
-      await generateCode({
+      const res = await generateCode({
         phone: user.phone,
         prefix: "+98",
       });
-
-      setCountdown(60);
+      if (res.captcha_required !== null) {
+        setShowCaptcha(true);
+        window.localStorage.setItem("captchaTime", res.captcha_required);
+      }
+      setCountdown(10);
       setIsTimerActive(true);
-    } catch (error) {
+    } catch (error: any) {
+      const { captcha_required } = error.response.data;
+      if (captcha_required !== null) {
+        setShowCaptcha(true);
+      }
       console.error("Error resending OTP:", error);
-      alert("مشکلی در ارسال مجدد کد رخ داده است.");
     }
   };
 
