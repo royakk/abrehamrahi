@@ -10,9 +10,9 @@ import { useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { useLoginContext } from "@/lib/loginContext";
-import { http } from "@/services/http";
 import { generateCode, login } from "@/services/login";
 import { useEffect, useState } from "react";
+import { httpRequest } from "@/services/http";
 
 type OtpRequest = {
   captcha_id: string;
@@ -75,7 +75,7 @@ export const OtpCode = () => {
 
   const onSubmit: SubmitHandler<OtpRequest> = async (data) => {
     try {
-      await http.post("v6/profile/auth/validate-otp/", {
+      await httpRequest.post("v6/profile/auth/validate-otp/", {
         ...data,
         phone: user.phone,
         captcha_id: user.captcha_id,

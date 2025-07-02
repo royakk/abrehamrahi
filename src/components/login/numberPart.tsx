@@ -2,7 +2,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
-import { http } from "@/services/http";
 import { useLoginContext, type User } from "@/lib/loginContext";
 import { generateCode } from "@/services/login";
 import { isPast } from "@/lib/utils";
@@ -15,13 +14,9 @@ export type GenerateCode = {
   captcha_id: string;
 };
 export const NumberPart = () => {
-  const { step, setUser, setShowCaptcha, goToStep } = useLoginContext();
+  const { setUser, setShowCaptcha, goToStep } = useLoginContext();
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<GenerateCode>({
+  const { control, handleSubmit } = useForm<GenerateCode>({
     defaultValues: {
       phone: "",
       prefix: "+98",
@@ -30,32 +25,32 @@ export const NumberPart = () => {
 
   const onSubmit: SubmitHandler<GenerateCode> = async (data) => {
     const phone = data.phone.startsWith("0") ? data.phone.slice(1) : data.phone;
-    // if (isPast()) {
-    //   setShowCaptcha(true);
-    // } else {
-    setUser((prevUser: User) => ({
-      ...prevUser,
-      phone: phone,
-    }));
-    try {
-      const res = await generateCode({
-        ...data,
+    if (!isPast()) {
+      setShowCaptcha(true);
+    } else {
+      setUser((prevUser: User) => ({
+        ...prevUser,
         phone: phone,
-      });
+      }));
+      try {
+        const res = await generateCode({
+          ...data,
+          phone: phone,
+        });
 
-      if (res.captcha_required !== null) {
-        setShowCaptcha(true);
-        window.localStorage.setItem("captchaTime", res.captcha_required);
-      } else {
-        goToStep("otp");
-      }
-    } catch (error: any) {
-      const { captcha_required } = error.response.data;
-      if (captcha_required !== null) {
-        setShowCaptcha(true);
+        if (res.captcha_required !== null) {
+          setShowCaptcha(true);
+          window.localStorage.setItem("captchaTime", res.captcha_required);
+        } else {
+          goToStep("otp");
+        }
+      } catch (error: any) {
+        const { captcha_required } = error.response.data;
+        if (captcha_required !== null) {
+          setShowCaptcha(true);
+        }
       }
     }
-    // }
   };
   return (
     <div>

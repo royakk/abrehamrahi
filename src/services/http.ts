@@ -1,4 +1,4 @@
-// src/lib/http.ts
+// src/lib/httpRequest.ts
 import axios, { AxiosError } from "axios";
 import type { AxiosInstance, AxiosRequestConfig } from "axios";
 const BASE_URL = "https://abrehamrahi.ir/api/"; // 🔁 replace with your backend
@@ -76,7 +76,7 @@ axiosInstance.interceptors.response.use(
   }
 );
 
-export const http = {
+export const httpRequest = {
   get: <T = any>(url: string, config?: AxiosRequestConfig) =>
     axiosInstance.get<T>(url, config),
 

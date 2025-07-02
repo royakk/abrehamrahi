@@ -8,11 +8,9 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { http } from "@/services/http";
 import { useLoginContext, type User } from "@/lib/loginContext";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
-import { DialogClose } from "@radix-ui/react-dialog";
-import { X } from "lucide-react";
+import { httpRequest } from "@/services/http";
 
 interface CaptchaResponse {
   image: string;
@@ -31,7 +29,9 @@ export const CaptchDialog = () => {
     useLoginContext();
   const fetchCaptcha = async () => {
     try {
-      const res = await http.get<CaptchaResponse>("v1/captcha/get-captcha/");
+      const res = await httpRequest.get<CaptchaResponse>(
+        "v1/captcha/get-captcha/"
+      );
       setSrc(res.data.image);
       setUser((prevUser: User) => ({
         ...prevUser,
@@ -45,12 +45,7 @@ export const CaptchDialog = () => {
     fetchCaptcha();
   }, [showCaptch]);
 
-  const {
-    control,
-    handleSubmit,
-    resetField,
-    formState: { errors },
-  } = useForm<CaptchaRequest>({
+  const { control, handleSubmit, resetField } = useForm<CaptchaRequest>({
     defaultValues: {
       captcha_id: "",
       captcha_provider: "MCI-CAPTCHA",
@@ -61,7 +56,7 @@ export const CaptchDialog = () => {
   });
   const onSubmit: SubmitHandler<CaptchaRequest> = async (data) => {
     try {
-      await http.post("v6/profile/auth/generate-code/", {
+      await httpRequest.post("v6/profile/auth/generate-code/", {
         ...data,
         phone: user.phone,
         captcha_id: user.captcha_id,
