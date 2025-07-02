@@ -40,7 +40,7 @@ export const PasswordPart = () => {
       if (loginRes.data.captcha_required !== null) {
         setShowCaptcha(true);
       } else {
-        navigate("/profile");
+        navigate("/");
       }
     } catch (error: any) {
       const { captcha_required } = error.response.data;

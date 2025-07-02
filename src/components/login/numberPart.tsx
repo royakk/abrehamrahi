@@ -73,19 +73,21 @@ export const NumberPart = () => {
                 شماره موبایل
               </Label>
               <Input
+                {...field}
                 className={`ltr bg-newblack200
               `}
-                error={!!fieldState}
                 type="text"
                 id="phone"
                 placeholder="09** *** ***"
-                {...field}
+                error={!!fieldState}
               />
+
               {fieldState.error && (
-                <span className="text-red-500 text-sm">
+                <span className="text-red-500 text-sm ">
                   {fieldState.error.message}
                 </span>
               )}
+
               <Button className="mt-8 bg-primaryMain h-[48px] ">ورود</Button>
             </div>
           )}

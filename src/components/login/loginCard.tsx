@@ -16,14 +16,14 @@ const LoginFlow = () => {
   return (
     <div>
       <Card className="w-[376px] sm:w-[488px] shadow-none px-4  md:px-[59px] py-8">
-        <CardHeader className="rtl mb-6 !p-0">
+        <CardHeader className="rtl mb-8 !p-0">
           <div style={{ display: "flex" }}>
             <img src="./Group.png" alt="Group" />
             <img src="./abr.png" alt="ABR" />
           </div>
         </CardHeader>
 
-        <CardContent className="p-0">
+        <CardContent className="p-0 ">
           {step === "number" && <NumberPart />}
           {step === "password" && <PasswordPart />}
           {step === "otp" && <OtpCode />}

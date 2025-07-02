@@ -11,6 +11,7 @@ export default function Router() {
     <>
       {user ? (
         <Routes>
+          <Route element={<Navigate to="/" />} path="/" />
           <Route path="/" element={<Profile />} />
         </Routes>
       ) : user === null ? (

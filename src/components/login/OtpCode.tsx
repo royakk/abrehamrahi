@@ -83,7 +83,7 @@ export const OtpCode = () => {
         code: Number(data.code),
       });
 
-      navigate("/profile");
+      navigate("/");
     } catch (error: any) {
       const { captcha_required } = error.response.data;
       if (captcha_required !== null) {

@@ -5,6 +5,7 @@ interface InputProps extends React.ComponentProps<"input"> {
   error?: boolean;
 }
 function Input({ className, type, error, ...props }: InputProps) {
+  console.log("error", error);
   return (
     <input
       type={type}

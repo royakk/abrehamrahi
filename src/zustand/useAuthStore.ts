@@ -1,3 +1,4 @@
+import type { UserViewModel } from "@/features/shared/types";
 import { create } from "zustand";
 
 interface AuthState {
