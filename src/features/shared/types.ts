@@ -1,21 +1,27 @@
-export type VodDetails = {
+export type UserViewModel = {
   id: number;
-  status: string;
-  ai_text_status: string;
-  url: string;
-  key: string;
-  title: string;
+  phone: string;
+  name: string;
   description: string;
-  is_encrypted: boolean;
-  start_time: number;
-  hidden: boolean;
-  tag: string;
-  resolution: string;
-  pg_state: number;
-  duration: number;
-  storage: number;
-  transcode_vod_id: number;
-  language: string;
-  user: number;
-  category: number[];
+  picture_url: string;
+  banner_url: string;
+  chanell: string;
+  withdrawable_balance: number;
+  gifted_balance: number;
+  orgs: Orgs[];
 };
+interface Orgs {
+  id: number;
+  name: string;
+  total_quota: number;
+  used: number;
+  quota_exp: number;
+  managers: Managers[];
+}
+interface Managers {
+  id: number;
+  name: string;
+  phone: string;
+  picture_url: string;
+  prefix: string;
+}
