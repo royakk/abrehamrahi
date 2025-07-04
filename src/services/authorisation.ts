@@ -1,8 +1,8 @@
 // src/services/auth.ts
 
 import type { User } from "@/lib/loginContext";
-import type { GenerateCode } from "@/components/login/numberPart";
 import { httpRequest } from "./http";
+import type { GenerateCode } from "@/features/Auth/components/Login/numberPart";
 
 export const login = async (user: User) => {
   const res = await httpRequest.post("v6/profile/auth/login/", user);

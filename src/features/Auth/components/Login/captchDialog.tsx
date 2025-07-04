@@ -6,11 +6,12 @@ import {
   DialogFooter,
   DialogHeader,
 } from "@/components/ui/dialog";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
+
 import { useLoginContext, type User } from "@/lib/loginContext";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import { httpRequest } from "@/services/http";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 interface CaptchaResponse {
   image: string;
@@ -111,14 +112,10 @@ export const CaptchDialog = () => {
                       {...field}
                       id="captch"
                       className={`ltr h-[40px] sm:w-[189px] pr-10 `}
-                      error={!!fieldState}
+                      error={fieldState?.error?.message}
                     />
 
-                    {fieldState.error && (
-                      <p className="text-sm flex rtl p-0 min-w-[] text-red-500">
-                        {fieldState.error.message}
-                      </p>
-                    )}
+                   
                   </div>
                 )}
               />

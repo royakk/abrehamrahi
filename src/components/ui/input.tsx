@@ -1,26 +1,69 @@
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
-interface InputProps extends React.ComponentProps<"input"> {
-  error?: boolean;
+import { Button } from "./button";
+import { IMAGES } from "@/lib/images";
+
+
+export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+    label?: string | React.ReactElement;
+    required?: boolean;
+    error?: string;
+    parentClassName?: string;
+    additionalComponent?: React.ReactNode;
 }
-function Input({ className, type, error, ...props }: InputProps) {
-  console.log("error", error);
-  return (
-    <input
-      type={type}
-      data-slot="input"
-      className={cn(
-        "file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-[48px] w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
-        error
-          ? "border-red200 "
-          : "focus-visible:bg-newblack200 focus-visible:ring-primaryMain focus-visible:ring-[1.5px] focus-visible:outline-none",
-        "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
-        className
-      )}
-      {...props}
-    />
-  );
-}
+
+const Input = React.forwardRef<HTMLInputElement, InputProps>(({ className, type, ...props }, ref) => {
+    const [showPassword, setShowPassword] = React.useState(false);
+    const id = React.useId();
+
+    const dir = props.dir || (type && ["tel", "password", "number"].includes(type) ? "ltr" : undefined);
+
+    return (
+        <div className={`flex w-full flex-col gap-2 ${props.parentClassName}`}>
+            {props.label && (
+                <label htmlFor={id} className="inline-block text-sm font-normal text-black">
+                    {props.label}
+                </label>
+            )}
+            <div className="relative">
+                <input
+                    id={id}
+                    {...props}
+                    dir={dir}
+                    type={type === "password" ? (showPassword ? "text" : "password") : type}
+                    ref={ref}
+                    required={false}
+                    className={cn(
+                        "flex h-[38px] w-full rounded-[4px] border border-Net-1-03 bg-transparent px-3 py-1 text-sm font-normal transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-Net-1-07 focus-visible:outline-none focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
+                        className,
+                        `${props.error && "border-red200"}`,
+                        type === "password" && "pr-10 placeholder:text-right",
+                        type === "tel" && "placeholder:text-right",
+                        type === "number" && "pl-[50px] text-red200"
+                    )}
+                />
+                {props.additionalComponent && <>{props.additionalComponent}</>}
+                {props.error && <p className="absolute top-[110%] text-xs text-red200">{props.error}</p>}
+
+              
+
+                {type === "password" && (
+                    <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="absolute right-0 top-1/2 -translate-y-1/2 px-3"
+                        onClick={() => setShowPassword((prev) => !prev)}
+                    >
+                        {showPassword ? <img src={IMAGES.eye} className="size-5" /> : <img src={IMAGES.eyeSlash} className="size-5" />}
+                        <span className="sr-only">{showPassword ? "Hide password" : "Show password"}</span>
+                    </Button>
+                )}
+            </div>
+        </div>
+    );
+});
+Input.displayName = "Input";
 
 export { Input };

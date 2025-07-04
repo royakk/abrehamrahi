@@ -79,14 +79,8 @@ export const NumberPart = () => {
                 type="text"
                 id="phone"
                 placeholder="09** *** ***"
-                error={!!fieldState}
+                error={fieldState?.error?.message}
               />
-
-              {fieldState.error && (
-                <span className="text-red-500 text-sm ">
-                  {fieldState.error.message}
-                </span>
-              )}
 
               <Button className="mt-8 bg-primaryMain h-[48px] ">ورود</Button>
             </div>
