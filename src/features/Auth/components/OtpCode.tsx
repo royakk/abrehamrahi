@@ -11,27 +11,22 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useLoginContext } from "@/lib/loginContext";
 import { useEffect, useState } from "react";
-import { httpRequest } from "@/services/http";
-import { generateCode, login } from "@/services/authorisation";
-
-type OtpRequest = {
-  captcha_id: string;
-  captcha_provider: string;
-  captcha_value: string;
-  phone: string;
-  prefix: string;
-  code: string;
-};
+import type { ValidateOtp } from "../types";
+import { authService } from "../services";
+import useLoginStore from "@/zustand/useLoginForms";
+import { authToken } from "@/lib/storage";
+import { getProfile } from "@/hooks/usecheckLogin";
+import { PATH } from "@/lib/path";
+import { captchaTime } from "../storage";
 
 export const OtpCode = () => {
   const { user, goToStep, setShowCaptcha } = useLoginContext();
+  const { loginForms, setLoginForms } = useLoginStore();
   const [countdown, setCountdown] = useState(10);
   const [isTimerActive, setIsTimerActive] = useState(true);
   const navigate = useNavigate();
-  const { control, handleSubmit, setError } = useForm<OtpRequest>({
+  const { control, handleSubmit, setError } = useForm<ValidateOtp>({
     defaultValues: {
-      phone: "",
-      prefix: "+98",
       code: "",
     },
   });
@@ -68,32 +63,66 @@ export const OtpCode = () => {
     }
   };
 
-  const onSubmit: SubmitHandler<OtpRequest> = async (data) => {
-    try {
-      await httpRequest.post("v6/profile/auth/validate-otp/", {
-        ...data,
-        phone: user.phone,
-        captcha_id: user.captcha_id,
+  const onSubmit: SubmitHandler<ValidateOtp> = async (values) => {
+    const captchaInLocalStorage = captchaTime.get();
+    if (
+      captchaInLocalStorage &&
+      JSON.parse(captchaInLocalStorage!)["captcha_required"] * 1000 > Date.now()
+    )
+      setShowCaptcha(true);
+    else {
+      const { status, errors: validateError } = await authService.validateOtp({
+        ...loginForms,
+        ...values,
       });
-
-      await login({
-        ...data,
-        phone: user.phone,
-        captcha_id: user.captcha_id,
-        code: Number(data.code),
-      });
-
-      navigate("/");
-    } catch (error: any) {
-      const { captcha_required } = error.response.data;
-      if (captcha_required !== null) {
-        setShowCaptcha(true);
+      if (!validateError) {
+        const {
+          data,
+          status,
+          errors: loginError,
+        } = await authService.login({
+          ...loginForms,
+          code: Number(values.code),
+        });
+        if (!loginError) {
+          authToken.set({
+            access: data?.access || "",
+            refresh: data?.refresh || "",
+          });
+          await getProfile();
+          navigate(PATH.profile);
+        } else if (status === 429 && loginError) {
+          captchaTime.set(JSON.stringify(loginError));
+          setShowCaptcha(true);
+        }
       }
-      setError("code", {
-        type: "manual",
-        message: "کد وارد شده نادرست است",
-      });
     }
+
+    // try {
+    //   await httpRequest.post("v6/profile/auth/validate-otp/", {
+    //     ...data,
+    //     phone: user.phone,
+    //     captcha_id: user.captcha_id,
+    //   });
+
+    //   await login({
+    //     ...data,
+    //     phone: user.phone,
+    //     captcha_id: user.captcha_id,
+    //     code: Number(data.code),
+    //   });
+
+    //   navigate("/");
+    // } catch (error: any) {
+    //   const { captcha_required } = error.response.data;
+    //   if (captcha_required !== null) {
+    //     setShowCaptcha(true);
+    //   }
+    //   setError("code", {
+    //     type: "manual",
+    //     message: "کد وارد شده نادرست است",
+    //   });
+    // }
   };
 
   return (

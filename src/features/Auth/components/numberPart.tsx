@@ -2,53 +2,46 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
-import { useLoginContext, type User } from "@/lib/loginContext";
-import { isPast } from "@/lib/utils";
-import { generateCode } from "@/services/authorisation";
-export type GenerateCode = {
-  phone: string;
-  request_type?: number;
-  prefix: string;
-  captcha_value?: string;
-  captcha_proivider?: string;
-  captcha_id?: string;
-};
-export const NumberPart = () => {
-  const { setUser, setShowCaptcha, goToStep } = useLoginContext();
+import { useLoginContext } from "@/lib/loginContext";
+import type { GenerateOtpReq } from "../types";
+import { captchaTime } from "../storage";
+import { authService } from "../services";
+import useLoginStore from "@/zustand/useLoginForms";
 
-  const { control, handleSubmit } = useForm<GenerateCode>({
+export const NumberPart = () => {
+  const { setShowCaptcha, goToStep } = useLoginContext();
+  const { setLoginForms } = useLoginStore();
+
+  const { control, handleSubmit } = useForm<GenerateOtpReq>({
     defaultValues: {
       phone: "",
       prefix: "+98",
     },
   });
 
-  const onSubmit: SubmitHandler<GenerateCode> = async (data) => {
-    const phone = data.phone.startsWith("0") ? data.phone.slice(1) : data.phone;
-    if (!isPast()) {
+  const onSubmit: SubmitHandler<GenerateOtpReq> = async (values) => {
+    const editedPhone = values.phone.startsWith("0")
+      ? values.phone.slice(1)
+      : values.phone;
+    setLoginForms({ phone: editedPhone });
+    const captchaInLocalStorage = captchaTime.get();
+    if (
+      captchaInLocalStorage &&
+      JSON.parse(captchaInLocalStorage!)["captcha_required"] * 1000 > Date.now()
+    )
       setShowCaptcha(true);
-    } else {
-      setUser((prevUser: User) => ({
-        ...prevUser,
-        phone: phone,
-      }));
-      try {
-        const res = await generateCode({
-          ...data,
-          phone: phone,
-        });
-
-        if (res.captcha_required !== null) {
-          setShowCaptcha(true);
-          window.localStorage.setItem("captchaTime", res.captcha_required);
-        } else {
-          goToStep("otp");
-        }
-      } catch (error: any) {
-        const { captcha_required } = error.response.data;
-        if (captcha_required !== null) {
-          setShowCaptcha(true);
-        }
+    else {
+      captchaTime.remove();
+      const {
+        data,
+        status,
+        errors: otpErrors,
+      } = await authService.generateOtp({ ...values, phone: editedPhone });
+      if (data?.captcha_required === null && !otpErrors) {
+        goToStep("otp");
+      } else if (status === 429 && otpErrors) {
+        captchaTime.set(JSON.stringify(otpErrors));
+        setShowCaptcha(true);
       }
     }
   };

@@ -56,4 +56,6 @@ class AuthServices {
     );
   }
 }
-export default AuthServices;
+export  const authService = new AuthServices();
+
+

@@ -5,7 +5,7 @@ export type Token = {
 export type GenerateOtpReq = {
   phone: string;
   request_type?: number;
-  prefix: string;
+  prefix?: string;
   captcha_value?: string;
   captcha_proivider?: string;
   captcha_id?: string;
@@ -19,12 +19,16 @@ export type ValidateOtp = {
   captcha_value?: string;
   captcha_proivider?: string;
   captcha_id?: string;
-  code: number;
+  code: string;
 };
 export type Captcha = {
   id: string;
   provider: string;
   image: string;
+};
+export type CaptchaState = {
+    scope: string;
+    captcha_required: number;
 };
 export interface LoginReq {
   password?: string;
