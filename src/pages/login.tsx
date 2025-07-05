@@ -1,6 +1,6 @@
-import { LoginImage } from "@/components/login/image";
-import { LoginCard } from "@/components/login/loginCard";
-import { MenoLogin } from "@/components/login/menu";
+import { LoginImage } from "@/features/Auth/components/image";
+import { LoginCard } from "@/features/Auth/components/loginCard";
+import { MenoLogin } from "@/features/Auth/components/menu";
 
 export const Login = () => {
   return (

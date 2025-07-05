@@ -6,8 +6,8 @@ import {
   DialogFooter,
   DialogHeader,
 } from "@/components/ui/dialog";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
+import { Button } from "../../../components/ui/button";
+import { Input } from "../../../components/ui/input";
 import { useLoginContext, type User } from "@/lib/loginContext";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import { httpRequest } from "@/services/http";
