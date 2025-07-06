@@ -10,65 +10,43 @@ import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { useLoginContext, type User } from "@/lib/loginContext";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
-import { httpRequest } from "@/services/http";
+import type { CaptchaDialogProps, LoginReq } from "../types";
+import { authService } from "../services";
+import useLoginStore from "@/zustand/useLoginForms";
+import { captchaTime } from "../storage";
 
-interface CaptchaResponse {
-  image: string;
-  id: string;
-}
-interface CaptchaRequest {
-  captcha_id: string;
-  captcha_provider: string;
-  captcha_value: string;
-  phone: string;
-  prefix: string;
-}
-export const CaptchDialog = () => {
+export const CaptchDialog = ({ onSubmit }: CaptchaDialogProps) => {
   const [src, setSrc] = useState<string | null>(null);
-  const { showCaptch, user, setUser, goToStep, setShowCaptcha } =
-    useLoginContext();
-  const fetchCaptcha = async () => {
-    try {
-      const res = await httpRequest.get<CaptchaResponse>(
-        "v1/captcha/get-captcha/"
-      );
-      setSrc(res.data.image);
-      setUser((prevUser: User) => ({
-        ...prevUser,
-        captcha_id: res.data.id,
-      }));
-    } catch (error) {
-      console.error("Error fetching captcha:", error);
-    }
-  };
-  useEffect(() => {
-    fetchCaptcha();
-  }, [showCaptch]);
+  const [loading, setLoading] = useState(false);
+  const { setShowCaptcha, showCaptch } = useLoginContext();
+  const { loginForms, setLoginForms } = useLoginStore();
 
-  const { control, handleSubmit, resetField } = useForm<CaptchaRequest>({
+  const { control, handleSubmit, resetField } = useForm<LoginReq>({
     defaultValues: {
-      captcha_id: "",
       captcha_provider: "MCI-CAPTCHA",
-      captcha_value: "",
-      phone: "",
-      prefix: "+98",
     },
   });
-  const onSubmit: SubmitHandler<CaptchaRequest> = async (data) => {
-    try {
-      await httpRequest.post("v6/profile/auth/generate-code/", {
-        ...data,
-        phone: user.phone,
-        captcha_id: user.captcha_id,
-      });
-
-      goToStep("otp");
-      setShowCaptcha(false);
-      resetField("captcha_value");
-    } catch (error) {
-      alert(error);
-    }
+  const getCaptcha = async () => {
+    const {
+      data,
+      status,
+      errors: captchaErrors,
+    } = await authService.getCaptcha();
+    if (data)
+      setLoginForms({ captcha_id: data.id, captcha_provider: data.provider });
+    else setLoginForms({ captcha_id: "", captcha_provider: "" });
   };
+  useEffect(() => {
+    getCaptcha();
+  }, [showCaptch]);
+  const submitHandler = async () => {
+    setLoading(true);
+    captchaTime.remove();
+    await onSubmit();
+    setLoading(false);
+    setShowCaptcha(false);
+  };
+
   return (
     <div>
       <Dialog open={true} onOpenChange={(open) => setShowCaptcha(open)}>
@@ -79,9 +57,15 @@ export const CaptchDialog = () => {
             </DialogDescription>
           </DialogHeader>
 
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              await submitHandler();
+            }}
+          >
             <div className="flex items-center gap-3 ">
-              <button onClick={() => fetchCaptcha()} type="button">
+              <button onClick={() => getCaptcha()} type="button">
                 <img src="./refresh-2.png" alt="refresh" />
               </button>
               {src ? (
@@ -127,6 +111,7 @@ export const CaptchDialog = () => {
               <Button
                 type="submit"
                 className="mt-4 bg-primaryMain h-[48px] w-full"
+                disabled={loading}
               >
                 ادامه
               </Button>

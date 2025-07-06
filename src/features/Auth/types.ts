@@ -3,7 +3,7 @@ export type Token = {
   refresh: string;
 };
 export type GenerateOtpReq = {
-  phone: string;
+  phone?: string;
   request_type?: number;
   prefix?: string;
   captcha_value?: string;
@@ -29,6 +29,11 @@ export type Captcha = {
 export type CaptchaState = {
     scope: string;
     captcha_required: number;
+};
+export type CaptchaDialogProps = {
+    // captcha: Partial<CaptchaState>;
+    // setCaptcha: Dispatch<SetStateAction<Partial<CaptchaState>>>;
+    onSubmit: () => Promise<void>;
 };
 export interface LoginReq {
   password?: string;

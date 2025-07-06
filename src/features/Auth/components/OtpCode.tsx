@@ -25,7 +25,7 @@ export const OtpCode = () => {
   const [countdown, setCountdown] = useState(10);
   const [isTimerActive, setIsTimerActive] = useState(true);
   const navigate = useNavigate();
-  const { control, handleSubmit, setError } = useForm<ValidateOtp>({
+  const { control, handleSubmit, setError, watch } = useForm<ValidateOtp>({
     defaultValues: {
       code: "",
     },
@@ -43,23 +43,15 @@ export const OtpCode = () => {
   }, [isTimerActive, countdown]);
 
   const handleResendCode = async () => {
-    try {
-      const res = await generateCode({
-        phone: user.phone || "",
-        prefix: "+98",
-      });
-      if (res.captcha_required !== null) {
-        setShowCaptcha(true);
-        window.localStorage.setItem("captchaTime", res.captcha_required);
-      }
-      setCountdown(10);
-      setIsTimerActive(true);
-    } catch (error: any) {
-      const { captcha_required } = error.response.data;
-      if (captcha_required !== null) {
-        setShowCaptcha(true);
-      }
-      console.error("Error resending OTP:", error);
+    captchaTime.remove();
+    const {
+      data,
+      errors: otpErrors,
+    } = await authService.generateOtp({ ...loginForms });
+
+    if (data?.captcha_required !== null) {
+      captchaTime.set(JSON.stringify(otpErrors));
+      setShowCaptcha(true);
     }
   };
 

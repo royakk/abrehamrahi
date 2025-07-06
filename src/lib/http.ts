@@ -3,6 +3,7 @@ import ENV from "@/env";
 import axios, { AxiosError } from "axios";
 import type { AxiosInstance, AxiosRequestConfig } from "axios";
 import { authToken } from "./storage";
+import { handleAPIError } from "./error";
 
 
 
@@ -83,6 +84,14 @@ export interface AxiosServiceResponse<T> {
   status: number | null;
   errors: any | null;
 }
+httpService.interceptors.response.use(
+    (response) => {
+        return response;
+    },
+    (error) => {
+        return handleAPIError(error);
+    }
+);
 export async function axiosService<T>(
   url: string,
   method: AxiosServiceMethod,
@@ -108,3 +117,4 @@ export async function axiosService<T>(
     };
   }
 }
+export default httpService;

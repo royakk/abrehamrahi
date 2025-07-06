@@ -20,8 +20,8 @@ export const NumberPart = () => {
   });
 
   const onSubmit: SubmitHandler<GenerateOtpReq> = async (values) => {
-    const editedPhone = values.phone.startsWith("0")
-      ? values.phone.slice(1)
+    const editedPhone = values?.phone && values?.phone.startsWith("0")
+      ? values?.phone.slice(1)
       : values.phone;
     setLoginForms({ phone: editedPhone });
     const captchaInLocalStorage = captchaTime.get();

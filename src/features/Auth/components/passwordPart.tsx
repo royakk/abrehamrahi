@@ -7,7 +7,12 @@ import { useForm, Controller } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
 import { useLoginContext, type User } from "@/lib/loginContext";
 import { useNavigate } from "react-router-dom";
-import { login } from "@/services/authorisation";
+import { authService } from "../services";
+import useLoginStore from "@/zustand/useLoginForms";
+import { authToken } from "@/lib/storage";
+import { getProfile } from "@/hooks/usecheckLogin";
+import { PATH } from "@/lib/path";
+import { captchaTime } from "../storage";
 
 type PasswordRequest = {
   country: string;
@@ -19,6 +24,7 @@ type PasswordRequest = {
 export const PasswordPart = () => {
   const [showPassword, setShowPassword] = useState(false);
   const { goToStep, setUser, user, setShowCaptcha } = useLoginContext();
+  const { loginForms, setLoginForms } = useLoginStore();
 
   const { control, handleSubmit, setError } = useForm<PasswordRequest>({
     defaultValues: {
@@ -30,27 +36,58 @@ export const PasswordPart = () => {
   });
   const navigate = useNavigate();
 
-  const onSubmit: SubmitHandler<PasswordRequest> = async (data) => {
-    setUser((prevUser: User) => ({
-      ...prevUser,
-      password: data.password,
-    }));
-    try {
-      const loginRes = await login({ ...data, phone: user.phone });
-      if (loginRes.data.captcha_required !== null) {
-        setShowCaptcha(true);
-      } else {
-        navigate("/");
-      }
-    } catch (error: any) {
-      const { captcha_required } = error.response.data;
-      if (captcha_required !== null) {
-        setShowCaptcha(true);
-      }
-      setError("password", {
+  const onSubmit: SubmitHandler<PasswordRequest> = async (values) => {
+    // setUser((prevUser: User) => ({
+    //   ...prevUser,
+    //   password: data.password,
+    // }));
+    // try {
+    //   const loginRes = await login({ ...data, phone: user.phone });
+    //   if (loginRes.data.captcha_required !== null) {
+    //     setShowCaptcha(true);
+    //   } else {
+    //     navigate("/");
+    //   }
+    // } catch (error: any) {
+    //   const { captcha_required } = error.response.data;
+    //   if (captcha_required !== null) {
+    //     setShowCaptcha(true);
+    //   }
+    //   setError("password", {
+    //     type: "manual",
+    //     message: "رمز عبور شما اشتباه هست، لطفا دوباره تلاش کنید",
+    //   });
+    // }
+    const captchaInLocalStorage = captchaTime.get();
+    if (
+      captchaInLocalStorage &&
+      JSON.parse(captchaInLocalStorage!)["captcha_required"] * 1000 > Date.now()
+    )
+      setShowCaptcha(true);
+    else {
+      const {
+        data,
+        status,
+        errors: loginError,
+      } = await authService.login({
+        ...loginForms,
+        ...values,
+      });
+      if (!loginError) {
+        authToken.set({
+          access: data?.access || "",
+          refresh: data?.refresh || "",
+        });
+        await getProfile();
+        navigate(PATH.profile);
+      } else if (status === 429 && loginError) {
+        captchaTime.set(JSON.stringify(loginError));
+        setError("password", {
         type: "manual",
         message: "رمز عبور شما اشتباه هست، لطفا دوباره تلاش کنید",
       });
+        setShowCaptcha(true);
+      }
     }
   };
 
