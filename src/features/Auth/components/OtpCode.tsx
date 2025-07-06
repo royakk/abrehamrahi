@@ -15,13 +15,17 @@ import type { ValidateOtp } from "../types";
 import { authService } from "../services";
 import useLoginStore from "@/zustand/useLoginForms";
 import { authToken } from "@/lib/storage";
-import { getProfile } from "@/hooks/usecheckLogin";
+import useCheckLogin, { getProfile } from "@/hooks/usecheckLogin";
 import { PATH } from "@/lib/path";
 import { captchaTime } from "../storage";
+import { CaptchDialog } from "./captchDialog";
+import useAuthStore from "@/zustand/useAuthStore";
 
 export const OtpCode = () => {
-  const { user, goToStep, setShowCaptcha } = useLoginContext();
+  const { user, goToStep, setShowCaptcha, showCaptch } = useLoginContext();
   const { loginForms, setLoginForms } = useLoginStore();
+    const { setUser } = useAuthStore((state) => state);
+
   const [countdown, setCountdown] = useState(10);
   const [isTimerActive, setIsTimerActive] = useState(true);
   const navigate = useNavigate();
@@ -44,10 +48,9 @@ export const OtpCode = () => {
 
   const handleResendCode = async () => {
     captchaTime.remove();
-    const {
-      data,
-      errors: otpErrors,
-    } = await authService.generateOtp({ ...loginForms });
+    const { data, errors: otpErrors } = await authService.generateOtp({
+      ...loginForms,
+    });
 
     if (data?.captcha_required !== null) {
       captchaTime.set(JSON.stringify(otpErrors));
@@ -57,11 +60,13 @@ export const OtpCode = () => {
 
   const onSubmit: SubmitHandler<ValidateOtp> = async (values) => {
     const captchaInLocalStorage = captchaTime.get();
-    if (
-      captchaInLocalStorage &&
-      JSON.parse(captchaInLocalStorage!)["captcha_required"] * 1000 > Date.now()
-    )
-      setShowCaptcha(true);
+   if (
+  captchaInLocalStorage &&
+  captchaInLocalStorage.captcha_required &&
+  captchaInLocalStorage.captcha_required * 1000 > Date.now()
+) {
+  setShowCaptcha(true)}
+
     else {
       const { status, errors: validateError } = await authService.validateOtp({
         ...loginForms,
@@ -76,12 +81,15 @@ export const OtpCode = () => {
           ...loginForms,
           code: Number(values.code),
         });
-        if (!loginError) {
+        if (data) {
           authToken.set({
-            access: data?.access || "",
-            refresh: data?.refresh || "",
+            access: data?.access! ,
+            refresh: data?.refresh! ,
           });
-          await getProfile();
+          const profileRes = await authService.getProfile();
+          if(profileRes){
+           setUser(profileRes.data)
+          }
           navigate(PATH.profile);
         } else if (status === 429 && loginError) {
           captchaTime.set(JSON.stringify(loginError));
@@ -90,31 +98,7 @@ export const OtpCode = () => {
       }
     }
 
-    // try {
-    //   await httpRequest.post("v6/profile/auth/validate-otp/", {
-    //     ...data,
-    //     phone: user.phone,
-    //     captcha_id: user.captcha_id,
-    //   });
-
-    //   await login({
-    //     ...data,
-    //     phone: user.phone,
-    //     captcha_id: user.captcha_id,
-    //     code: Number(data.code),
-    //   });
-
-    //   navigate("/");
-    // } catch (error: any) {
-    //   const { captcha_required } = error.response.data;
-    //   if (captcha_required !== null) {
-    //     setShowCaptcha(true);
-    //   }
-    //   setError("code", {
-    //     type: "manual",
-    //     message: "کد وارد شده نادرست است",
-    //   });
-    // }
+   
   };
 
   return (
@@ -204,6 +188,7 @@ export const OtpCode = () => {
           </p>
         </div>
       </form>
+      {showCaptch && <CaptchDialog onSubmit={handleSubmit(onSubmit)} />}
     </div>
   );
 };

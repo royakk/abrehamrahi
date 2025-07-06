@@ -33,7 +33,7 @@ const LoginFlow = () => {
             <MenoLogin sm />
           </CardFooter>
         </div>
-        {showCaptch && <CaptchDialog />}
+        
       </Card>
     </div>
   );

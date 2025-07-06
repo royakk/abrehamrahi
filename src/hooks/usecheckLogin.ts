@@ -12,13 +12,6 @@ export const getProfile = async () => {
   //     const response = await planUseCase.getPlan(data?.user_active_package.id);
   //     console.log(response);
   // }
-
-  if (data) {
-    setUser(data);
-  } else {
-    setUser(null);
-    authToken.remove();
-  }
 };
 const useCheckLogin = () => {
   const setUser = useAuthStore((state) => state.setUser);
@@ -29,11 +22,13 @@ const useCheckLogin = () => {
   useEffect(() => {
     (async () => {
       if (authToken.get()) {
+        console.log("authTokenif", authToken);
         const { data } = await authService.getProfile();
         setUser(data);
       } else {
-        navigate(PATH.login);
-        setUser(null);
+        console.log("authTokenelseerror", authToken);
+        // navigate(PATH.login);
+        // setUser(null);
       }
     })();
   }, []);

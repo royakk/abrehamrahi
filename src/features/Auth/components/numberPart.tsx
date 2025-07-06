@@ -7,10 +7,11 @@ import type { GenerateOtpReq } from "../types";
 import { captchaTime } from "../storage";
 import { authService } from "../services";
 import useLoginStore from "@/zustand/useLoginForms";
+import { CaptchDialog } from "./captchDialog";
 
 export const NumberPart = () => {
-  const { setShowCaptcha, goToStep } = useLoginContext();
-  const { setLoginForms } = useLoginStore();
+  const { setShowCaptcha, goToStep, showCaptch } = useLoginContext();
+  const { setLoginForms, loginForms } = useLoginStore();
 
   const { control, handleSubmit } = useForm<GenerateOtpReq>({
     defaultValues: {
@@ -20,30 +21,40 @@ export const NumberPart = () => {
   });
 
   const onSubmit: SubmitHandler<GenerateOtpReq> = async (values) => {
-    const editedPhone = values?.phone && values?.phone.startsWith("0")
-      ? values?.phone.slice(1)
-      : values.phone;
+    const editedPhone =
+      values?.phone && values?.phone.startsWith("0")
+        ? values?.phone.slice(1)
+        : values.phone;
     setLoginForms({ phone: editedPhone });
     const captchaInLocalStorage = captchaTime.get();
-    if (
-      captchaInLocalStorage &&
-      JSON.parse(captchaInLocalStorage!)["captcha_required"] * 1000 > Date.now()
-    )
-      setShowCaptcha(true);
-    else {
-      captchaTime.remove();
-      const {
-        data,
-        status,
-        errors: otpErrors,
-      } = await authService.generateOtp({ ...values, phone: editedPhone });
-      if (data?.captcha_required === null && !otpErrors) {
-        goToStep("otp");
-      } else if (status === 429 && otpErrors) {
-        captchaTime.set(JSON.stringify(otpErrors));
-        setShowCaptcha(true);
-      }
-    }
+console.log("captchaInLocalStorage", captchaInLocalStorage);
+
+if (
+  captchaInLocalStorage &&
+  captchaInLocalStorage.captcha_required &&
+  captchaInLocalStorage.captcha_required * 1000 > Date.now()
+) {
+  setShowCaptcha(true);
+} else {
+  captchaTime.remove();
+
+  const {
+    data,
+    status,
+    errors: otpErrors,
+  } = await authService.generateOtp({
+    ...values,
+    ...loginForms,
+    phone: editedPhone,
+  });
+
+  if (data?.captcha_required === null && !otpErrors) {
+    goToStep("otp");
+  } else if (data?.captcha_required !== null) {
+    captchaTime.set(otpErrors);
+    setShowCaptcha(true);
+  }
+}
   };
   return (
     <div>
@@ -72,20 +83,15 @@ export const NumberPart = () => {
                 type="text"
                 id="phone"
                 placeholder="09** *** ***"
-                error={!!fieldState}
+                error={fieldState.error?.message}
               />
-
-              {fieldState.error && (
-                <span className="text-red-500 text-sm ">
-                  {fieldState.error.message}
-                </span>
-              )}
 
               <Button className="mt-8 bg-primaryMain h-[48px] ">ورود</Button>
             </div>
           )}
         />
       </form>
+      {showCaptch && <CaptchDialog onSubmit={handleSubmit(onSubmit)} />}
     </div>
   );
 };

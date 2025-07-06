@@ -1,13 +1,10 @@
 export const captchaTime = {
   key: "Abr_Captcha",
-  get: (): string | null => {
-    if (localStorage.getItem(captchaTime.key)) {
-      return JSON.parse(localStorage.getItem(captchaTime.key)!);
-    } else {
-      return null;
-    }
+  get: (): any | null => {
+    const value = localStorage.getItem(captchaTime.key);
+    return value ? JSON.parse(value) : null;
   },
-  set: (value: string) => {
+  set: (value: any) => {
     localStorage.setItem(captchaTime.key, JSON.stringify(value));
   },
   remove: () => localStorage.removeItem(captchaTime.key),

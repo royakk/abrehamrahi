@@ -129,7 +129,7 @@ export const PasswordPart = () => {
                     id="password"
                     type={showPassword ? "text" : "password"}
                     className={`ltr pr-10 `}
-                    error={!!fieldState}
+                    error={fieldState.error?.message}
                   />
                   <button
                     type="button"
@@ -140,11 +140,7 @@ export const PasswordPart = () => {
                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
                 </div>
-                {fieldState.error && (
-                  <p className="text-sm flex items-start p-0 text-red-500">
-                    {fieldState.error.message}
-                  </p>
-                )}
+              
               </>
             )}
           />

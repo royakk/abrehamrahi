@@ -14,11 +14,12 @@ import type {
   ValidateOtp,
 } from "./types";
 import type { User } from "@/lib/loginContext";
+import type { UserViewModel } from "../shared/types";
 
 class AuthServices {
   async login(loginReq: LoginReq): Promise<AxiosServiceResponse<LoginRes>> {
     return await axiosService(API.profile.login, AxiosServiceMethod.POST, {
-      loginReq,
+      ...loginReq,
     });
   }
   async getCaptcha(): Promise<AxiosServiceResponse<Captcha>> {
@@ -33,7 +34,7 @@ class AuthServices {
     return await axiosService(
       API.profile.generateCode,
       AxiosServiceMethod.POST,
-      { otpRequest }
+      { ...otpRequest}
     );
   }
   async validateOtp(
@@ -42,17 +43,17 @@ class AuthServices {
     return await axiosService(
       API.profile.validateOtp,
       AxiosServiceMethod.POST,
-      { validateOtp }
+      { ...validateOtp }
     );
   }
-  async getProfile(): Promise<AxiosServiceResponse<User>> {
-    return await axiosService(API.profile.validateOtp, AxiosServiceMethod.GET);
+  async getProfile(): Promise<AxiosServiceResponse<UserViewModel>> {
+    return await axiosService(API.profile.getProfile, AxiosServiceMethod.GET);
   }
   async refresh(refresh: string): Promise<AxiosServiceResponse<Token>> {
     return await axiosService(
       API.profile.refreshToken,
       AxiosServiceMethod.POST,
-      { refresh }
+       refresh 
     );
   }
 }

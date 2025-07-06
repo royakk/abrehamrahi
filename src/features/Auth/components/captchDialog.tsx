@@ -21,7 +21,7 @@ export const CaptchDialog = ({ onSubmit }: CaptchaDialogProps) => {
   const { setShowCaptcha, showCaptch } = useLoginContext();
   const { loginForms, setLoginForms } = useLoginStore();
 
-  const { control, handleSubmit, resetField } = useForm<LoginReq>({
+  const { control, handleSubmit, resetField,watch,getValues } = useForm<LoginReq>({
     defaultValues: {
       captcha_provider: "MCI-CAPTCHA",
     },
@@ -32,14 +32,25 @@ export const CaptchDialog = ({ onSubmit }: CaptchaDialogProps) => {
       status,
       errors: captchaErrors,
     } = await authService.getCaptcha();
-    if (data)
+    if (data) {
+      setSrc(data.image);
       setLoginForms({ captcha_id: data.id, captcha_provider: data.provider });
-    else setLoginForms({ captcha_id: "", captcha_provider: "" });
+    } else setLoginForms({ captcha_id: "", captcha_provider: "",captcha_value:"" });
   };
   useEffect(() => {
     getCaptcha();
+    
   }, [showCaptch]);
+   const captchaValue = watch("captcha_value")
+
+    
+  useEffect(()=>{
+    console.log('captchaValue', captchaValue)
+    
+    setLoginForms({ captcha_value:captchaValue})
+  },[captchaValue])
   const submitHandler = async () => {
+     
     setLoading(true);
     captchaTime.remove();
     await onSubmit();
@@ -95,14 +106,10 @@ export const CaptchDialog = ({ onSubmit }: CaptchaDialogProps) => {
                       {...field}
                       id="captch"
                       className={`ltr h-[40px] sm:w-[189px] pr-10 `}
-                      error={!!fieldState}
+                      error={fieldState.error?.message}
                     />
 
-                    {fieldState.error && (
-                      <p className="text-sm flex rtl p-0 min-w-[] text-red-500">
-                        {fieldState.error.message}
-                      </p>
-                    )}
+
                   </div>
                 )}
               />
