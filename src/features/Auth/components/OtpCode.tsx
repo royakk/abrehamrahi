@@ -47,16 +47,23 @@ export const OtpCode = () => {
   }, [isTimerActive, countdown]);
 
   const handleResendCode = async () => {
-    captchaTime.remove();
-    const { data, errors: otpErrors } = await authService.generateOtp({
-      ...loginForms,
-    });
+  setCountdown(10);
+  setIsTimerActive(true);
+  
+  captchaTime.remove();
+  
+  const { data, errors: otpErrors } = await authService.generateOtp({
+    ...loginForms,
+  });
 
-    if (data?.captcha_required !== null) {
-      captchaTime.set(JSON.stringify(otpErrors));
-      setShowCaptcha(true);
-    }
-  };
+  if (data?.captcha_required) {
+    captchaTime.set(JSON.stringify(otpErrors));
+    setShowCaptcha(true);
+  } else {
+    alert("کد فعال‌سازی جدید ارسال شد."); // "A new activation code has been sent."
+  }
+};
+
 
   const onSubmit: SubmitHandler<ValidateOtp> = async (values) => {
     const captchaInLocalStorage = captchaTime.get();

@@ -1,5 +1,8 @@
 
-export const Profile = () => {
-  
-  return <div>Profilbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbe</div>;
+export const ProfilePage = () => {
+  return (
+    <div>
+      <h1>Profile Page</h1>
+    </div>
+  );
 };

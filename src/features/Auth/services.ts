@@ -13,7 +13,6 @@ import type {
   Token,
   ValidateOtp,
 } from "./types";
-import type { User } from "@/lib/loginContext";
 import type { UserViewModel } from "../shared/types";
 
 class AuthServices {
@@ -34,7 +33,7 @@ class AuthServices {
     return await axiosService(
       API.profile.generateCode,
       AxiosServiceMethod.POST,
-      { ...otpRequest}
+      { ...otpRequest }
     );
   }
   async validateOtp(
@@ -53,10 +52,8 @@ class AuthServices {
     return await axiosService(
       API.profile.refreshToken,
       AxiosServiceMethod.POST,
-       refresh 
+      { refresh: refresh }
     );
   }
 }
-export  const authService = new AuthServices();
-
-
+export const authService = new AuthServices();

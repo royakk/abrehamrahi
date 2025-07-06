@@ -13,58 +13,35 @@ import { authToken } from "@/lib/storage";
 import { getProfile } from "@/hooks/usecheckLogin";
 import { PATH } from "@/lib/path";
 import { captchaTime } from "../storage";
-
-type PasswordRequest = {
-  country: string;
-  password: string;
-  phone: string;
-  prefix: string;
-};
+import type { LoginReq } from "../types";
+import { CaptchDialog } from "./captchDialog";
+import useAuthStore from "@/zustand/useAuthStore";
 
 export const PasswordPart = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const { goToStep, setUser, user, setShowCaptcha } = useLoginContext();
+  const { goToStep, setShowCaptcha, showCaptch } = useLoginContext();
   const { loginForms, setLoginForms } = useLoginStore();
+  const { setUser } = useAuthStore();
 
-  const { control, handleSubmit, setError } = useForm<PasswordRequest>({
+  const { control, handleSubmit, setError, trigger } = useForm<LoginReq>({
     defaultValues: {
       country: "IR",
       password: "",
-      phone: "",
-      prefix: "+98",
     },
   });
   const navigate = useNavigate();
 
-  const onSubmit: SubmitHandler<PasswordRequest> = async (values) => {
-    // setUser((prevUser: User) => ({
-    //   ...prevUser,
-    //   password: data.password,
-    // }));
-    // try {
-    //   const loginRes = await login({ ...data, phone: user.phone });
-    //   if (loginRes.data.captcha_required !== null) {
-    //     setShowCaptcha(true);
-    //   } else {
-    //     navigate("/");
-    //   }
-    // } catch (error: any) {
-    //   const { captcha_required } = error.response.data;
-    //   if (captcha_required !== null) {
-    //     setShowCaptcha(true);
-    //   }
-    //   setError("password", {
-    //     type: "manual",
-    //     message: "رمز عبور شما اشتباه هست، لطفا دوباره تلاش کنید",
-    //   });
-    // }
+  const onSubmit: SubmitHandler<LoginReq> = async (values) => {
     const captchaInLocalStorage = captchaTime.get();
     if (
       captchaInLocalStorage &&
-      JSON.parse(captchaInLocalStorage!)["captcha_required"] * 1000 > Date.now()
-    )
+      captchaInLocalStorage.captcha_required &&
+      captchaInLocalStorage.captcha_required * 1000 > Date.now()
+    ) {
+      console.log("if");
       setShowCaptcha(true);
-    else {
+    } else {
+      console.log("else");
       const {
         data,
         status,
@@ -73,20 +50,30 @@ export const PasswordPart = () => {
         ...loginForms,
         ...values,
       });
-      if (!loginError) {
+      console.log("loginError", loginError);
+      console.log("status", status);
+
+      if (data) {
         authToken.set({
-          access: data?.access || "",
-          refresh: data?.refresh || "",
+          access: data?.access!,
+          refresh: data?.refresh!,
         });
-        await getProfile();
+        const profileRes = await authService.getProfile();
+        if (profileRes) {
+          setUser(profileRes.data);
+        }
         navigate(PATH.profile);
-      } else if (status === 429 && loginError) {
+      } else if (loginError.captcha_required !== null) {
+        setError("password", {  message: loginError.detail || "نام کاربری یا رمز عبور اشتباه اشت"  });
         captchaTime.set(JSON.stringify(loginError));
-        setError("password", {
-        type: "manual",
-        message: "رمز عبور شما اشتباه هست، لطفا دوباره تلاش کنید",
-      });
         setShowCaptcha(true);
+       trigger("password");
+      } else {
+        console.log("here roya");
+        setError("password", {
+          message: "نام کاربری یا کلمه عبور اشتباه است",
+        });
+         trigger("password");
       }
     }
   };
@@ -131,16 +118,8 @@ export const PasswordPart = () => {
                     className={`ltr pr-10 `}
                     error={fieldState.error?.message}
                   />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword((prev) => !prev)}
-                    className="absolute inset-y-0 right-2 flex items-center text-gray-500"
-                    tabIndex={-1}
-                  >
-                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                  </button>
                 </div>
-              
+                
               </>
             )}
           />
@@ -167,6 +146,7 @@ export const PasswordPart = () => {
           </p>
         </div>
       </div>
+      {showCaptch && <CaptchDialog onSubmit={handleSubmit(onSubmit)} />}
     </div>
   );
 };
