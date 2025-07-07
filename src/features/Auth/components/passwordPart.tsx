@@ -30,11 +30,13 @@ export const PasswordPart = () => {
   const navigate = useNavigate();
 
   const onSubmit: SubmitHandler<LoginReq> = async (values) => {
-    const captchaInLocalStorage = captchaTime.get();
+    const rawCaptcha = captchaTime.get();
+    const captchaInLocalStorage = rawCaptcha ? JSON.parse(rawCaptcha) : null;
+
     if (
       captchaInLocalStorage &&
       captchaInLocalStorage.captcha_required &&
-      captchaInLocalStorage.captcha_required * 1000 > Date.now()
+      Number(captchaInLocalStorage.captcha_required) * 1000 > Date.now()
     ) {
       setShowCaptcha(true);
     } else {
@@ -61,7 +63,6 @@ export const PasswordPart = () => {
           message: loginError.detail,
         });
         captchaTime.set(JSON.stringify(loginError));
-        setShowCaptcha(true);
       } else {
         setError("password", {
           message: loginError.detail,

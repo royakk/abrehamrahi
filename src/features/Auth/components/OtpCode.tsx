@@ -46,28 +46,41 @@ export const OtpCode = () => {
   }, [isTimerActive, countdown]);
 
   const handleResendCode = async () => {
-    setCountdown(15);
-    setIsTimerActive(true);
+    const rawCaptcha = captchaTime.get();
+    const captchaInLocalStorage = rawCaptcha ? JSON.parse(rawCaptcha) : null;
 
-    captchaTime.remove();
-
-    const { data, errors: otpErrors } = await authService.generateOtp({
-      ...loginForms,
-    });
-
-    if (data?.captcha_required !== null) {
-      captchaTime.set(JSON.stringify(otpErrors));
+    if (
+      captchaInLocalStorage &&
+      captchaInLocalStorage.captcha_required &&
+      Number(captchaInLocalStorage.captcha_required) * 1000 > Date.now()
+    ) {
+      setShowCaptcha(true);
     } else {
-      alert("کد فعال‌سازی جدید ارسال شد.");
+      setCountdown(15);
+      setIsTimerActive(true);
+
+      captchaTime.remove();
+
+      const { data, errors: otpErrors } = await authService.generateOtp({
+        ...loginForms,
+      });
+
+      if (data?.captcha_required !== null) {
+        captchaTime.set(JSON.stringify(otpErrors));
+      } else {
+        alert("کد فعال‌سازی جدید ارسال شد.");
+      }
     }
   };
 
   const onSubmit: SubmitHandler<ValidateOtp> = async (values) => {
-    const captchaInLocalStorage = captchaTime.get();
+    const rawCaptcha = captchaTime.get();
+    const captchaInLocalStorage = rawCaptcha ? JSON.parse(rawCaptcha) : null;
+
     if (
       captchaInLocalStorage &&
       captchaInLocalStorage.captcha_required &&
-      captchaInLocalStorage.captcha_required * 1000 > Date.now()
+      Number(captchaInLocalStorage.captcha_required) * 1000 > Date.now()
     ) {
       setShowCaptcha(true);
     } else {
@@ -89,18 +102,18 @@ export const OtpCode = () => {
             access: data?.access!,
             refresh: data?.refresh!,
           });
+          console.log("dataaaaa", data);
           const profileRes = await authService.getProfile();
           if (profileRes) {
             setUser(profileRes.data);
           }
           navigate(PATH.profile);
-        } else if (loginError.captcha_required !== null) {
-          captchaTime.set(JSON.stringify(loginError));
-          setShowCaptcha(true);
+        } else if (validateError.captcha_required !== null) {
+          captchaTime.set(JSON.stringify(validateError));
         }
       } else if (validateError.captcha_required !== null) {
         captchaTime.set(JSON.stringify(validateError));
-        setShowCaptcha(true);
+        setError("code", { message: "dvdکد وارد شده نادرست است" });
       } else {
         setError("code", { message: "کد وارد شده نادرست است" });
       }
