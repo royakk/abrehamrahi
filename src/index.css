@@ -3,7 +3,8 @@
 
 @font-face {
   font-family: "IRANYekanWebFn";
-  src: url("./assets/fonts/YekanBakhFa/iranyekanwebboldfanum.ttf") format("ttf");
+  src: url("./assets/fonts/YekanBakhFa/ttf/iranyekanwebboldfanum.ttf")
+    format("truetype");
 
   font-weight: bold;
   font-style: normal;
@@ -11,8 +12,8 @@
 }
 @font-face {
   font-family: "IRANYekanWebFn";
-  src: url("./assets/fonts/YekanBakhFa/iranyekanwebmediumfanum.ttf")
-    format("ttf");
+  src: url("./assets/fonts/YekanBakhFa/ttf/iranyekanwebmediumfanum.ttf")
+    format("truetype");
 
   font-weight: 500;
   font-style: normal;
@@ -20,8 +21,35 @@
 }
 @font-face {
   font-family: "IRANYekanWebFn";
-  src: url("./assets/fonts/YekanBakhFa/iranyekanwebregularfanum.ttf")
-    format("ttf");
+  src: url("./assets/fonts/YekanBakhFa/ttf/iranyekanweblightfanum.ttf")
+    format("truetype");
+
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "IRANYekanWebFn";
+  src: url("./assets/fonts/YekanBakhFa/ttf/iranyekanwebregularfanum.ttf")
+    format("truetype");
+
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "IRANYekanWebFn";
+  src: url("./assets/fonts/YekanBakhFa/ttf/iranyekanwebmediumfanum.ttf")
+    format("truetype");
+
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "IRANYekanWebFn";
+  src: url("./assets/fonts/YekanBakhFa/ttf/iranyekanweblightfanum.ttf")
+    format("truetype");
 
   font-weight: 300;
   font-style: normal;
@@ -29,21 +57,42 @@
 }
 @font-face {
   font-family: "IRANYekanWebFn";
-  src: url("./assets/fonts/YekanBakhFa/iranyekanweblightfanum.ttf")
-    format("ttf");
-
-  font-weight: 300;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "IRANYekanWebFn";
-  src: url("./assets/fonts/YekanBakhFa/iranyekanwebblackfanum.ttf")
-    format("ttf");
+  src: url("./assets/fonts/YekanBakhFa/ttf/iranyekanwebblackfanum.ttf")
+    format("truetype");
 
   font-weight: 900;
   font-style: normal;
   font-display: swap;
+}
+@font-face {
+  font-family: "IRANYekanWebFn";
+  src: url("./assets/fonts/YekanBakhEn/ttf/IRANYekanWebBold.ttf")
+    format("truetype");
+
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "IRANYekanWebFn";
+  src: url("./assets/fonts/YekanBakhEn/ttf/IRANYekanWebMedium.ttf")
+    format("truetype");
+  font-weight: 500;
+  font-style: normal;
+}
+@font-face {
+  font-family: "IRANYekanWebFn";
+  src: url("./assets/fonts/YekanBakhEn/ttf/IRANYekanWebRegular.ttf")
+    format("truetype");
+  font-weight: 500;
+  font-style: normal;
+}
+@font-face {
+  font-family: "IRANYekanWebFn";
+  src: url("./assets/fonts/YekanBakhEn/ttf/IRANYekanWebLight.ttf")
+    format("truetype");
+  font-weight: 300;
+  font-style: normal;
 }
 @custom-variant dark (&:is(.dark *));
 
@@ -168,7 +217,10 @@
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.551 0.027 264.364);
 }
-
+.use-persian-digits {
+  unicode-bidi: plaintext;
+  direction: rtl;
+}
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -176,5 +228,6 @@
   body {
     @apply bg-background text-foreground;
     font-family: "IRANYekanWebFn";
+    unicode-bidi: plaintext;
   }
 }

@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Eye, EyeOff } from "lucide-react";
 import { useForm, Controller } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
 import { useLoginContext, type User } from "@/lib/loginContext";
@@ -10,7 +9,6 @@ import { useNavigate } from "react-router-dom";
 import { authService } from "../services";
 import useLoginStore from "@/zustand/useLoginForms";
 import { authToken } from "@/lib/storage";
-import { getProfile } from "@/hooks/usecheckLogin";
 import { PATH } from "@/lib/path";
 import { captchaTime } from "../storage";
 import type { LoginReq } from "../types";
@@ -23,7 +21,7 @@ export const PasswordPart = () => {
   const { loginForms, setLoginForms } = useLoginStore();
   const { setUser } = useAuthStore();
 
-  const { control, handleSubmit, setError, trigger } = useForm<LoginReq>({
+  const { control, handleSubmit, setError } = useForm<LoginReq>({
     defaultValues: {
       country: "IR",
       password: "",
@@ -64,16 +62,15 @@ export const PasswordPart = () => {
         }
         navigate(PATH.profile);
       } else if (loginError.captcha_required !== null) {
-        setError("password", {  message: loginError.detail || "نام کاربری یا رمز عبور اشتباه اشت"  });
+        setError("password", {
+          message: loginError.detail,
+        });
         captchaTime.set(JSON.stringify(loginError));
         setShowCaptcha(true);
-       trigger("password");
       } else {
-        console.log("here roya");
         setError("password", {
-          message: "نام کاربری یا کلمه عبور اشتباه است",
+          message: loginError.detail,
         });
-         trigger("password");
       }
     }
   };
@@ -119,7 +116,6 @@ export const PasswordPart = () => {
                     error={fieldState.error?.message}
                   />
                 </div>
-                
               </>
             )}
           />

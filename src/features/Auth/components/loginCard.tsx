@@ -8,16 +8,15 @@ import { NumberPart } from "./numberPart";
 import { PasswordPart } from "./passwordPart";
 import { OtpCode } from "./OtpCode";
 import { LoginProvider, useLoginContext } from "@/lib/loginContext";
-import { CaptchDialog } from "./captchDialog";
 import { MenoLogin } from "./menu";
 const LoginFlow = () => {
-  const { step, showCaptch } = useLoginContext();
+  const { step } = useLoginContext();
 
   return (
     <div>
       <Card className="w-[376px] sm:w-[488px] shadow-none px-4  md:px-[59px] py-8">
         <CardHeader className="rtl mb-8 !p-0">
-          <div style={{ display: "flex" }}>
+          <div style={{ display: "flex", gap: 8 }}>
             <img src="./Group.png" alt="Group" />
             <img src="./abr.png" alt="ABR" />
           </div>
@@ -33,7 +32,6 @@ const LoginFlow = () => {
             <MenoLogin sm />
           </CardFooter>
         </div>
-        
       </Card>
     </div>
   );

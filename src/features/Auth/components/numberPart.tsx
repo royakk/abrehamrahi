@@ -21,40 +21,45 @@ export const NumberPart = () => {
   });
 
   const onSubmit: SubmitHandler<GenerateOtpReq> = async (values) => {
+    console.log("Date.now()", Date.now());
     const editedPhone =
       values?.phone && values?.phone.startsWith("0")
         ? values?.phone.slice(1)
         : values.phone;
     setLoginForms({ phone: editedPhone });
     const captchaInLocalStorage = captchaTime.get();
-console.log("captchaInLocalStorage", captchaInLocalStorage);
 
-if (
-  captchaInLocalStorage &&
-  captchaInLocalStorage.captcha_required &&
-  captchaInLocalStorage.captcha_required * 1000 > Date.now()
-) {
-  setShowCaptcha(true);
-} else {
-  captchaTime.remove();
+    if (
+      captchaInLocalStorage &&
+      captchaInLocalStorage.captcha_required &&
+      captchaInLocalStorage.captcha_required * 1000 > Date.now()
+    ) {
+      setShowCaptcha(true);
+    } else {
+      captchaTime.remove();
 
-  const {
-    data,
-    status,
-    errors: otpErrors,
-  } = await authService.generateOtp({
-    ...values,
-    ...loginForms,
-    phone: editedPhone,
-  });
+      const {
+        data,
+        status,
+        errors: otpErrors,
+      } = await authService.generateOtp({
+        ...values,
+        ...loginForms,
+        phone: editedPhone,
+      });
 
-  if (data?.captcha_required === null && !otpErrors) {
-    goToStep("otp");
-  } else if (data?.captcha_required !== null) {
-    captchaTime.set(otpErrors);
-    setShowCaptcha(true);
-  }
-}
+      if (!otpErrors) {
+        goToStep("otp");
+      }
+      if (data?.captcha_required !== null) {
+        console.log("set captcg");
+        captchaTime.set(data);
+      }
+      if (otpErrors) {
+        captchaTime.set(otpErrors);
+        alert("کپچا نادرست است  ");
+      }
+    }
   };
   return (
     <div>
@@ -82,7 +87,7 @@ if (
               `}
                 type="text"
                 id="phone"
-                placeholder="09** *** ***"
+                placeholder="9** *** ***"
                 error={fieldState.error?.message}
               />
 
@@ -91,6 +96,14 @@ if (
           )}
         />
       </form>
+      <div className="flex text-start rtl mt-6 gap-4 ">
+        <p className="text-sm font-medium">حساب کاربری ندارید؟</p>
+        <button>
+          <p className="text-sm text-primaryMain cursor-pointer">
+            ثبت نام کنید
+          </p>
+        </button>
+      </div>
       {showCaptch && <CaptchDialog onSubmit={handleSubmit(onSubmit)} />}
     </div>
   );

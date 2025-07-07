@@ -15,7 +15,6 @@ import type { ValidateOtp } from "../types";
 import { authService } from "../services";
 import useLoginStore from "@/zustand/useLoginForms";
 import { authToken } from "@/lib/storage";
-import useCheckLogin, { getProfile } from "@/hooks/usecheckLogin";
 import { PATH } from "@/lib/path";
 import { captchaTime } from "../storage";
 import { CaptchDialog } from "./captchDialog";
@@ -23,10 +22,10 @@ import useAuthStore from "@/zustand/useAuthStore";
 
 export const OtpCode = () => {
   const { user, goToStep, setShowCaptcha, showCaptch } = useLoginContext();
-  const { loginForms, setLoginForms } = useLoginStore();
-    const { setUser } = useAuthStore((state) => state);
+  const { loginForms } = useLoginStore();
+  const { setUser } = useAuthStore((state) => state);
 
-  const [countdown, setCountdown] = useState(10);
+  const [countdown, setCountdown] = useState(15);
   const [isTimerActive, setIsTimerActive] = useState(true);
   const navigate = useNavigate();
   const { control, handleSubmit, setError, watch } = useForm<ValidateOtp>({
@@ -47,34 +46,31 @@ export const OtpCode = () => {
   }, [isTimerActive, countdown]);
 
   const handleResendCode = async () => {
-  setCountdown(10);
-  setIsTimerActive(true);
-  
-  captchaTime.remove();
-  
-  const { data, errors: otpErrors } = await authService.generateOtp({
-    ...loginForms,
-  });
+    setCountdown(15);
+    setIsTimerActive(true);
 
-  if (data?.captcha_required) {
-    captchaTime.set(JSON.stringify(otpErrors));
-    setShowCaptcha(true);
-  } else {
-    alert("کد فعال‌سازی جدید ارسال شد."); // "A new activation code has been sent."
-  }
-};
+    captchaTime.remove();
 
+    const { data, errors: otpErrors } = await authService.generateOtp({
+      ...loginForms,
+    });
+
+    if (data?.captcha_required !== null) {
+      captchaTime.set(JSON.stringify(otpErrors));
+    } else {
+      alert("کد فعال‌سازی جدید ارسال شد.");
+    }
+  };
 
   const onSubmit: SubmitHandler<ValidateOtp> = async (values) => {
     const captchaInLocalStorage = captchaTime.get();
-   if (
-  captchaInLocalStorage &&
-  captchaInLocalStorage.captcha_required &&
-  captchaInLocalStorage.captcha_required * 1000 > Date.now()
-) {
-  setShowCaptcha(true)}
-
-    else {
+    if (
+      captchaInLocalStorage &&
+      captchaInLocalStorage.captcha_required &&
+      captchaInLocalStorage.captcha_required * 1000 > Date.now()
+    ) {
+      setShowCaptcha(true);
+    } else {
       const { status, errors: validateError } = await authService.validateOtp({
         ...loginForms,
         ...values,
@@ -89,23 +85,27 @@ export const OtpCode = () => {
           code: Number(values.code),
         });
         if (data) {
+          authToken.remove();
           authToken.set({
-            access: data?.access! ,
-            refresh: data?.refresh! ,
+            access: data?.access!,
+            refresh: data?.refresh!,
           });
           const profileRes = await authService.getProfile();
-          if(profileRes){
-           setUser(profileRes.data)
+          if (profileRes) {
+            setUser(profileRes.data);
           }
           navigate(PATH.profile);
-        } else if (status === 429 && loginError) {
+        } else if (loginError.captcha_required !== null) {
           captchaTime.set(JSON.stringify(loginError));
           setShowCaptcha(true);
         }
+      } else if (validateError.captcha_required !== null) {
+        captchaTime.set(JSON.stringify(validateError));
+        setShowCaptcha(true);
+      } else {
+        setError("code", { message: "کد وارد شده نادرست است" });
       }
     }
-
-   
   };
 
   return (
@@ -114,7 +114,7 @@ export const OtpCode = () => {
         <div className=" flex text-center  items-center  gap-3 rtl">
           <button
             onClick={() => goToStep("number")}
-            className="  text-gray-500 cursor-pointer"
+            className="  text-gray-500 flex items-start cursor-pointer"
             tabIndex={-1}
           >
             <img src="./arrow-left.png" />
@@ -135,7 +135,7 @@ export const OtpCode = () => {
             name="code"
             control={control}
             rules={{
-              required: "شماره موبایل الزامی است",
+              required: " کد الزامی است",
             }}
             render={({ field, fieldState }) => (
               <div className="flex flex-col items-center gap-1">
@@ -144,7 +144,6 @@ export const OtpCode = () => {
                   value={field.value}
                   onChange={field.onChange}
                   onBlur={field.onBlur}
-                  autoFocus
                   pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
                 >
                   <InputOTPGroup className="flex rtl:flex-row-reverse gap-3">
@@ -154,7 +153,7 @@ export const OtpCode = () => {
                   </InputOTPGroup>
                 </InputOTP>
                 {fieldState.error && (
-                  <p className="text-red-500 text-sm mt-1">
+                  <p className="text-red-500 rtl text-sm mt-1">
                     {fieldState.error.message}
                   </p>
                 )}
