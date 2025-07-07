@@ -14,11 +14,9 @@ const useCheckLogin = () => {
   useEffect(() => {
     (async () => {
       if (authToken.get()) {
-        console.log("authTokenif", authToken);
         const { data } = await authService.getProfile();
         setUser(data);
       } else {
-        console.log("authTokenelseerror", authToken);
         navigate(PATH.login);
         setUser(null);
       }

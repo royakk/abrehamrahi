@@ -21,7 +21,6 @@ export const NumberPart = () => {
   });
 
   const onSubmit: SubmitHandler<GenerateOtpReq> = async (values) => {
-    console.log("Date.now()", Date.now());
     const editedPhone =
       values?.phone && values?.phone.startsWith("0")
         ? values?.phone.slice(1)
@@ -52,7 +51,6 @@ export const NumberPart = () => {
         goToStep("otp");
       }
       if (data?.captcha_required !== null) {
-        console.log("set captcg");
         captchaTime.set(data);
       }
       if (otpErrors) {

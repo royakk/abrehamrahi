@@ -36,10 +36,8 @@ export const PasswordPart = () => {
       captchaInLocalStorage.captcha_required &&
       captchaInLocalStorage.captcha_required * 1000 > Date.now()
     ) {
-      console.log("if");
       setShowCaptcha(true);
     } else {
-      console.log("else");
       const {
         data,
         status,
@@ -48,9 +46,6 @@ export const PasswordPart = () => {
         ...loginForms,
         ...values,
       });
-      console.log("loginError", loginError);
-      console.log("status", status);
-
       if (data) {
         authToken.set({
           access: data?.access!,

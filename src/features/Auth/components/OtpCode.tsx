@@ -85,7 +85,6 @@ export const OtpCode = () => {
           code: Number(values.code),
         });
         if (data) {
-          authToken.remove();
           authToken.set({
             access: data?.access!,
             refresh: data?.refresh!,

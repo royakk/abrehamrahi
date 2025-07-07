@@ -8,8 +8,8 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
-import { useLoginContext, type User } from "@/lib/loginContext";
-import { Controller, useForm, type SubmitHandler } from "react-hook-form";
+import { useLoginContext } from "@/lib/loginContext";
+import { Controller, useForm } from "react-hook-form";
 import type { CaptchaDialogProps, LoginReq } from "../types";
 import { authService } from "../services";
 import useLoginStore from "@/zustand/useLoginForms";
@@ -19,9 +19,9 @@ export const CaptchDialog = ({ onSubmit }: CaptchaDialogProps) => {
   const [src, setSrc] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const { setShowCaptcha, showCaptch } = useLoginContext();
-  const { loginForms, setLoginForms } = useLoginStore();
+  const { setLoginForms } = useLoginStore();
 
-  const { control, handleSubmit, resetField,watch,getValues } = useForm<LoginReq>({
+  const { control, watch } = useForm<LoginReq>({
     defaultValues: {
       captcha_provider: "MCI-CAPTCHA",
     },
@@ -29,28 +29,28 @@ export const CaptchDialog = ({ onSubmit }: CaptchaDialogProps) => {
   const getCaptcha = async () => {
     const {
       data,
-      status,
+
       errors: captchaErrors,
     } = await authService.getCaptcha();
     if (data) {
       setSrc(data.image);
       setLoginForms({ captcha_id: data.id, captcha_provider: data.provider });
-    } else setLoginForms({ captcha_id: "", captcha_provider: "",captcha_value:"" });
+    } else
+      setLoginForms({
+        captcha_id: "",
+        captcha_provider: "",
+        captcha_value: "",
+      });
   };
   useEffect(() => {
     getCaptcha();
-    
   }, [showCaptch]);
-   const captchaValue = watch("captcha_value")
+  const captchaValue = watch("captcha_value");
 
-    
-  useEffect(()=>{
-    console.log('captchaValue', captchaValue)
-    
-    setLoginForms({ captcha_value:captchaValue})
-  },[captchaValue])
+  useEffect(() => {
+    setLoginForms({ captcha_value: captchaValue });
+  }, [captchaValue]);
   const submitHandler = async () => {
-     
     setLoading(true);
     captchaTime.remove();
     await onSubmit();
@@ -108,8 +108,6 @@ export const CaptchDialog = ({ onSubmit }: CaptchaDialogProps) => {
                       className={`ltr h-[40px] sm:w-[189px] pr-10 `}
                       error={fieldState.error?.message}
                     />
-
-
                   </div>
                 )}
               />
