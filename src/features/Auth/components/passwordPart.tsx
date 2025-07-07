@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useForm, Controller } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
-import { useLoginContext, type User } from "@/lib/loginContext";
+import { useLoginContext } from "@/lib/loginContext";
 import { useNavigate } from "react-router-dom";
 import { authService } from "../services";
 import useLoginStore from "@/zustand/useLoginForms";
@@ -14,6 +14,7 @@ import { captchaTime } from "../storage";
 import type { LoginReq } from "../types";
 import { CaptchDialog } from "./captchDialog";
 import useAuthStore from "@/zustand/useAuthStore";
+import { getValidCaptcha } from "@/lib/utils";
 
 export const PasswordPart = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -30,14 +31,9 @@ export const PasswordPart = () => {
   const navigate = useNavigate();
 
   const onSubmit: SubmitHandler<LoginReq> = async (values) => {
-    const rawCaptcha = captchaTime.get();
-    const captchaInLocalStorage = rawCaptcha ? JSON.parse(rawCaptcha) : null;
+    const captchaInLocalStorage = getValidCaptcha();
 
-    if (
-      captchaInLocalStorage &&
-      captchaInLocalStorage.captcha_required &&
-      Number(captchaInLocalStorage.captcha_required) * 1000 > Date.now()
-    ) {
+    if (captchaInLocalStorage) {
       setShowCaptcha(true);
     } else {
       const {

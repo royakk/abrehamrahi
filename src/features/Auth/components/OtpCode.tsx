@@ -19,6 +19,7 @@ import { PATH } from "@/lib/path";
 import { captchaTime } from "../storage";
 import { CaptchDialog } from "./captchDialog";
 import useAuthStore from "@/zustand/useAuthStore";
+import { getValidCaptcha } from "@/lib/utils";
 
 export const OtpCode = () => {
   const { user, goToStep, setShowCaptcha, showCaptch } = useLoginContext();
@@ -46,14 +47,9 @@ export const OtpCode = () => {
   }, [isTimerActive, countdown]);
 
   const handleResendCode = async () => {
-    const rawCaptcha = captchaTime.get();
-    const captchaInLocalStorage = rawCaptcha ? JSON.parse(rawCaptcha) : null;
-
-    if (
-      captchaInLocalStorage &&
-      captchaInLocalStorage.captcha_required &&
-      Number(captchaInLocalStorage.captcha_required) * 1000 > Date.now()
-    ) {
+    const captchaInLocalStorage = getValidCaptcha();
+    if (captchaInLocalStorage) {
+      console.log("if");
       setShowCaptcha(true);
     } else {
       setCountdown(15);
@@ -74,14 +70,10 @@ export const OtpCode = () => {
   };
 
   const onSubmit: SubmitHandler<ValidateOtp> = async (values) => {
-    const rawCaptcha = captchaTime.get();
-    const captchaInLocalStorage = rawCaptcha ? JSON.parse(rawCaptcha) : null;
+    const captchaInLocalStorage = getValidCaptcha();
 
-    if (
-      captchaInLocalStorage &&
-      captchaInLocalStorage.captcha_required &&
-      Number(captchaInLocalStorage.captcha_required) * 1000 > Date.now()
-    ) {
+    if (captchaInLocalStorage) {
+      console.log("if");
       setShowCaptcha(true);
     } else {
       const { status, errors: validateError } = await authService.validateOtp({

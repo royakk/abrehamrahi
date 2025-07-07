@@ -1,3 +1,4 @@
+import { captchaTime } from "@/features/Auth/storage";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -10,3 +11,21 @@ export function isPast(): boolean {
   const now = new Date();
   return now > givenDate;
 }
+export const getValidCaptcha = () => {
+  try {
+    const raw = captchaTime.get();
+    if (!raw) return null;
+
+    const parsed = JSON.parse(raw);
+    const expiry = Number(parsed?.captcha_required) * 1000;
+
+    if (parsed?.captcha_required && expiry > Date.now()) {
+      return parsed;
+    }
+
+    return null;
+  } catch (e) {
+    console.error(" Failed to parse captcha from captchaTime:", e);
+    return null;
+  }
+};
