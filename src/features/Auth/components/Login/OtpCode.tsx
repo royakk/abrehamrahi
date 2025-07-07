@@ -11,13 +11,13 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useLoginContext } from "@/lib/loginContext";
 import { useEffect, useState } from "react";
-import type { ValidateOtp } from "../types";
-import { authService } from "../services";
+import type { ValidateOtp } from "../../types";
+import { authService } from "../../services";
 import useLoginStore from "@/zustand/useLoginForms";
 import { authToken } from "@/lib/storage";
 import { PATH } from "@/lib/path";
-import { captchaTime } from "../storage";
-import { CaptchDialog } from "./captchDialog";
+import { captchaTime } from "../../storage";
+import { CaptchDialog } from "../shared/captchDialog";
 import useAuthStore from "@/zustand/useAuthStore";
 import { getValidCaptcha } from "@/lib/utils";
 

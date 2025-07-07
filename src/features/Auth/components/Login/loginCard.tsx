@@ -8,7 +8,7 @@ import { NumberPart } from "./numberPart";
 import { PasswordPart } from "./passwordPart";
 import { OtpCode } from "./OtpCode";
 import { LoginProvider, useLoginContext } from "@/lib/loginContext";
-import { MenoLogin } from "./menu";
+import { MenoLogin } from "../shared/menu";
 const LoginFlow = () => {
   const { step } = useLoginContext();
 

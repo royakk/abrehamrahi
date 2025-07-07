@@ -1,8 +1,8 @@
-import { LoginImage } from "@/features/Auth/components/image";
-import { LoginCard } from "@/features/Auth/components/loginCard";
-import { MenoLogin } from "@/features/Auth/components/menu";
+import { RegisterFlow } from "@/features/Auth/components/Register/RegisterForm";
+import { LoginImage } from "@/features/Auth/components/shared/image";
+import { MenoLogin } from "@/features/Auth/components/shared/menu";
 
-export const Login = () => {
+export const RegisterPage = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="container grid w-full grid-cols-1 lg:grid-cols-2 items-center !p-0 lg:gap-16 max-w-5xl">
@@ -11,7 +11,7 @@ export const Login = () => {
           <MenoLogin />
         </div>
         <div className="flex justify-center w-full">
-          <LoginCard />
+          <RegisterFlow />
         </div>
       </div>
     </div>

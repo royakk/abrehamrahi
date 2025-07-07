@@ -1,6 +1,8 @@
 const PATH = {
   profile: "/",
   login: "/login",
+  changePassword: "/change-password",
+  register: "/register",
 };
 
 const API = {

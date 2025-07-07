@@ -3,11 +3,13 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import { useLoginContext } from "@/lib/loginContext";
-import type { GenerateOtpReq } from "../types";
-import { captchaTime } from "../storage";
-import { authService } from "../services";
+import type { GenerateOtpReq } from "../../types";
+import { captchaTime } from "../../storage";
+import { authService } from "../../services";
 import useLoginStore from "@/zustand/useLoginForms";
-import { CaptchDialog } from "./captchDialog";
+import { CaptchDialog } from "../shared/captchDialog";
+import { useNavigate } from "react-router";
+import { PATH } from "@/lib/path";
 
 export const NumberPart = () => {
   const { setShowCaptcha, goToStep, showCaptch } = useLoginContext();
@@ -19,7 +21,7 @@ export const NumberPart = () => {
       prefix: "+98",
     },
   });
-
+  const navigate = useNavigate();
   const onSubmit: SubmitHandler<GenerateOtpReq> = async (values) => {
     const editedPhone =
       values?.phone && values?.phone.startsWith("0")
@@ -96,10 +98,11 @@ export const NumberPart = () => {
       </form>
       <div className="flex text-start rtl mt-6 gap-4 ">
         <p className="text-sm font-medium">حساب کاربری ندارید؟</p>
-        <button>
-          <p className="text-sm text-primaryMain cursor-pointer">
-            ثبت نام کنید
-          </p>
+        <button
+          onClick={() => navigate(PATH.register)}
+          className="text-sm text-primaryMain cursor-pointer"
+        >
+          ثبت نام کنید
         </button>
       </div>
       {showCaptch && <CaptchDialog onSubmit={handleSubmit(onSubmit)} />}

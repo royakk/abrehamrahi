@@ -6,15 +6,15 @@ import { useForm, Controller } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
 import { useLoginContext } from "@/lib/loginContext";
 import { useNavigate } from "react-router-dom";
-import { authService } from "../services";
+import { authService } from "../../services";
 import useLoginStore from "@/zustand/useLoginForms";
 import { authToken } from "@/lib/storage";
 import { PATH } from "@/lib/path";
-import { captchaTime } from "../storage";
-import type { LoginReq } from "../types";
-import { CaptchDialog } from "./captchDialog";
+import { captchaTime } from "../../storage";
+import type { LoginReq } from "../../types";
 import useAuthStore from "@/zustand/useAuthStore";
 import { getValidCaptcha } from "@/lib/utils";
+import { CaptchDialog } from "../shared/captchDialog";
 
 export const PasswordPart = () => {
   const [showPassword, setShowPassword] = useState(false);

@@ -6,14 +6,14 @@ import {
   DialogFooter,
   DialogHeader,
 } from "@/components/ui/dialog";
-import { Button } from "../../../components/ui/button";
-import { Input } from "../../../components/ui/input";
+import { Button } from "../../../../components/ui/button";
+import { Input } from "../../../../components/ui/input";
 import { useLoginContext } from "@/lib/loginContext";
 import { Controller, useForm } from "react-hook-form";
-import type { CaptchaDialogProps, LoginReq } from "../types";
-import { authService } from "../services";
+import type { CaptchaDialogProps, LoginReq } from "../../types";
+import { authService } from "../../services";
 import useLoginStore from "@/zustand/useLoginForms";
-import { captchaTime } from "../storage";
+import { captchaTime } from "../../storage";
 
 export const CaptchDialog = ({ onSubmit }: CaptchaDialogProps) => {
   const [src, setSrc] = useState<string | null>(null);
