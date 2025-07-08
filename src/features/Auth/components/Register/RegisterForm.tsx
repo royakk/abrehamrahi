@@ -8,7 +8,6 @@ import { LoginProvider, useLoginContext } from "@/lib/loginContext";
 import { MenoLogin } from "../shared/menu";
 import { OtpCode } from "../Login/OtpCode";
 import { CreateAcount } from "./CreateAcount";
-import { NewPassword } from "./NewPassword";
 
 const RegisterFlowComponent = () => {
   const { step } = useLoginContext();
@@ -25,7 +24,7 @@ const RegisterFlowComponent = () => {
 
         <CardContent className="p-0">
           {step === "number" && <CreateAcount />}
-          {step === "otp" && <OtpCode />}
+          {step === "otp" && <OtpCode isRegister />}
         </CardContent>
         <div className="flex justify-center lg:hidden">
           <CardFooter>

@@ -11,10 +11,14 @@ import { CaptchDialog } from "../shared/captchDialog";
 import { useNavigate } from "react-router";
 import { PATH } from "@/lib/path";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useState } from "react";
+import { regexPhone } from "@/lib/utils";
 
 export const CreateAcount = () => {
   const { setShowCaptcha, goToStep, showCaptch } = useLoginContext();
   const { setLoginForms, loginForms } = useLoginStore();
+  const [confirm, setConfirm] = useState(false);
+  const [isPending, setIspending] = useState(false);
 
   const { control, handleSubmit } = useForm<GenerateOtpReq>({
     defaultValues: {
@@ -39,7 +43,7 @@ export const CreateAcount = () => {
       setShowCaptcha(true);
     } else {
       captchaTime.remove();
-
+      setIspending(true);
       const {
         data,
         status,
@@ -49,6 +53,7 @@ export const CreateAcount = () => {
         ...loginForms,
         phone: editedPhone,
       });
+      setIspending(false);
 
       if (!otpErrors) {
         goToStep("otp");
@@ -62,6 +67,7 @@ export const CreateAcount = () => {
       }
     }
   };
+  console.log("confirm", confirm);
   return (
     <div>
       <p className="flex rtl text-[22px] font-bold text-newblack800 mb-4">
@@ -76,6 +82,10 @@ export const CreateAcount = () => {
           control={control}
           rules={{
             required: "شماره موبایل الزامی است",
+            validate: {
+              pattern: (value) =>
+                regexPhone.phone.test(value!) || "شماره موبایل نامعتبر است",
+            },
           }}
           render={({ field, fieldState }) => (
             <div className="grid w-full rtl ">
@@ -91,11 +101,25 @@ export const CreateAcount = () => {
                 placeholder="09* *** ***"
                 error={fieldState.error?.message}
               />
-              <div className="flex">
-                <Checkbox id="terms" />
-                <Label htmlFor="terms">Accept terms and conditions</Label>
+              <div className="flex gap-2 mt-6">
+                <Checkbox
+                  checked={confirm}
+                  onCheckedChange={() => setConfirm((prev) => !prev)}
+                  id="terms"
+                  className="data-[state=checked]:bg-primaryMain rounded-[6px] data-[state=checked]:border-none"
+                />
+                <Label htmlFor="terms">
+                  پذیرش <span className="text-primaryMain">شرایط و قوانین</span>
+                  استفاده از ابرهمراهی
+                </Label>
               </div>
-              <Button className="mt-8 bg-primaryMain h-[48px] ">ثبت نام</Button>
+              <Button
+                type="submit"
+                disabled={!confirm || isPending}
+                className="mt-8 bg-primaryMain h-[48px] "
+              >
+                ثبت نام
+              </Button>
             </div>
           )}
         />

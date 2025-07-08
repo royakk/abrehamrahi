@@ -10,6 +10,8 @@ import type {
   GenerateOtpRes,
   LoginReq,
   LoginRes,
+  PasswordPolicyRes,
+  PasswordPolicyType,
   Token,
   ValidateOtp,
 } from "./types";
@@ -53,6 +55,14 @@ class AuthServices {
       API.profile.refreshToken,
       AxiosServiceMethod.POST,
       { refresh: refresh }
+    );
+  }
+  async getPasswordPolicies(): Promise<
+    AxiosServiceResponse<PasswordPolicyRes>
+  > {
+    return await axiosService(
+      API.configuration.getPasswordPolicy,
+      AxiosServiceMethod.GET
     );
   }
 }

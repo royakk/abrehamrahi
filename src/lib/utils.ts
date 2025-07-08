@@ -29,3 +29,6 @@ export const getValidCaptcha = () => {
     return null;
   }
 };
+export const regexPhone = {
+  phone: /^09\d{2} ?\d{3} ?\d{4}$/,
+};

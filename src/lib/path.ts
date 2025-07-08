@@ -9,7 +9,9 @@ const API = {
   captcha: {
     generate: "v1/captcha/get-captcha/",
   },
-
+  configuration: {
+    getPasswordPolicy: "v1/configuration/get-password-policies/fa/",
+  },
   profile: {
     generateCode: "v6/profile/auth/generate-code/",
     validateOtp: "v6/profile/auth/validate-otp/",

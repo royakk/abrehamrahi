@@ -21,7 +21,11 @@ import { CaptchDialog } from "../shared/captchDialog";
 import useAuthStore from "@/zustand/useAuthStore";
 import { getValidCaptcha } from "@/lib/utils";
 
-export const OtpCode = () => {
+interface OtpCodeProps {
+  isRegister?: boolean;
+}
+
+export const OtpCode = ({ isRegister }: OtpCodeProps) => {
   const { user, goToStep, setShowCaptcha, showCaptch } = useLoginContext();
   const { loginForms } = useLoginStore();
   const { setUser } = useAuthStore((state) => state);
@@ -29,7 +33,7 @@ export const OtpCode = () => {
   const [countdown, setCountdown] = useState(15);
   const [isTimerActive, setIsTimerActive] = useState(true);
   const navigate = useNavigate();
-  const { control, handleSubmit, setError, watch } = useForm<ValidateOtp>({
+  const { control, handleSubmit, setError } = useForm<ValidateOtp>({
     defaultValues: {
       code: "",
     },
@@ -49,7 +53,6 @@ export const OtpCode = () => {
   const handleResendCode = async () => {
     const captchaInLocalStorage = getValidCaptcha();
     if (captchaInLocalStorage) {
-      console.log("if");
       setShowCaptcha(true);
     } else {
       setCountdown(15);
@@ -76,16 +79,12 @@ export const OtpCode = () => {
       console.log("if");
       setShowCaptcha(true);
     } else {
-      const { status, errors: validateError } = await authService.validateOtp({
+      const { errors: validateError } = await authService.validateOtp({
         ...loginForms,
         ...values,
       });
       if (!validateError) {
-        const {
-          data,
-          status,
-          errors: loginError,
-        } = await authService.login({
+        const { data, errors: loginError } = await authService.login({
           ...loginForms,
           code: Number(values.code),
         });
@@ -94,18 +93,22 @@ export const OtpCode = () => {
             access: data?.access!,
             refresh: data?.refresh!,
           });
-          console.log("dataaaaa", data);
-          const profileRes = await authService.getProfile();
-          if (profileRes) {
-            setUser(profileRes.data);
+
+          if (data?.is_registered) {
+            navigate(PATH.changePassword);
+          } else {
+            const profileRes = await authService.getProfile();
+            if (profileRes) {
+              setUser(profileRes.data);
+            }
+            navigate(PATH.profile);
           }
-          navigate(PATH.profile);
         } else if (validateError.captcha_required !== null) {
           captchaTime.set(JSON.stringify(validateError));
+        } else if (loginError.captcha_required !== null) {
+          captchaTime.set(JSON.stringify(loginError));
         }
-      } else if (validateError.captcha_required !== null) {
-        captchaTime.set(JSON.stringify(validateError));
-        setError("code", { message: "dvdکد وارد شده نادرست است" });
+        setError("code", { message: "کد وارد شده نادرست است" });
       } else {
         setError("code", { message: "کد وارد شده نادرست است" });
       }
@@ -128,7 +131,7 @@ export const OtpCode = () => {
           </h1>
         </div>
         <h2 className="flex rtl text-[14px] font-bold text-newblack500 mb-8">
-          لطفا کد ۴ رقمی ارسال شده به شماره{" "}
+          لطفا کد 6 رقمی ارسال شده به شماره{" "}
           <span className="text-sm text-primaryMain mx-1">{user.phone} </span>را
           وارد کنید.
         </h2>
@@ -166,7 +169,7 @@ export const OtpCode = () => {
           />
         </div>
 
-        <Button type="submit" className="mt-5 w-full bg-primaryMain h-[48px]">
+        <Button className="mt-5 w-full bg-primaryMain h-[48px]">
           تایید کد ارسالی
         </Button>
 
@@ -189,13 +192,27 @@ export const OtpCode = () => {
         </div>
 
         <div className="flex items-center  rtl gap-2 ">
-          <img src="./unlock.png" />
-          <p
-            onClick={() => goToStep("password")}
-            className="text-primaryMain font-medium  text-[14px] cursor-pointer"
-          >
-            ورود با رمز عبور
-          </p>
+          {isRegister ? (
+            <>
+              <img src="./edit-2.png" />
+              <p
+                onClick={() => goToStep("number")}
+                className="text-primaryMain font-medium  text-[14px] cursor-pointer"
+              >
+                ویرایش شماره موبایل
+              </p>
+            </>
+          ) : (
+            <>
+              <img src="./unlock.png" />
+              <p
+                onClick={() => goToStep("password")}
+                className="text-primaryMain font-medium  text-[14px] cursor-pointer"
+              >
+                ورود با رمز عبور
+              </p>
+            </>
+          )}
         </div>
       </form>
       {showCaptch && <CaptchDialog onSubmit={handleSubmit(onSubmit)} />}

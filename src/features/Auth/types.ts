@@ -27,13 +27,13 @@ export type Captcha = {
   image: string;
 };
 export type CaptchaState = {
-    scope: string;
-    captcha_required: number;
+  scope: string;
+  captcha_required: number;
 };
 export type CaptchaDialogProps = {
-    // captcha: Partial<CaptchaState>;
-    // setCaptcha: Dispatch<SetStateAction<Partial<CaptchaState>>>;
-    onSubmit: () => Promise<void>;
+  // captcha: Partial<CaptchaState>;
+  // setCaptcha: Dispatch<SetStateAction<Partial<CaptchaState>>>;
+  onSubmit: () => Promise<void>;
 };
 export interface LoginReq {
   password?: string;
@@ -52,5 +52,18 @@ export interface LoginRes {
   refresh?: string;
   token_id?: number;
   captcha_required: string;
-  is_registerd?: boolean;
+  is_registered?: boolean;
 }
+export type ChangePasswordReq = {
+  refresh?: string;
+  code?: string;
+  new_password: string;
+  password: string;
+};
+export type PasswordPolicyType = {
+  pattern: RegExp;
+  message: string;
+};
+export type PasswordPolicyRes = {
+  regexes: PasswordPolicyType[];
+};
