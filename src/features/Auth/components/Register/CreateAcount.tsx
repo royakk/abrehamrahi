@@ -27,8 +27,10 @@ export const CreateAcount = () => {
     },
   });
   useEffect(() => {
-    const phoneWithZero = "0" + loginForms?.phone;
-    setValue("phone", phoneWithZero);
+    if (loginForms?.phone) {
+      const phoneWithZero = "0" + loginForms?.phone;
+      setValue("phone", phoneWithZero);
+    }
   }, []);
   const navigate = useNavigate();
   const onSubmit: SubmitHandler<GenerateOtpReq> = async (values) => {

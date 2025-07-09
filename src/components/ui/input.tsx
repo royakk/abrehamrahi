@@ -45,7 +45,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             required={false}
             className={cn(
-              "flex h-[38px] w-full rounded-[4px] border border-Net-1-03 bg-newblack200 px-3 py-1 text-sm font-normal transition-colors file:border-0 file:text-sm file:font-medium file:text-foreground placeholder:text-Net-1-07 focus-visible:outline-none focus-visible:bg-white focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
+              "flex h-[48px] w-full rounded-[4px] border border-Net-1-03 bg-newblack200 px-3 py-1 text-sm font-normal transition-colors file:border-0 file:text-sm file:font-medium file:text-foreground placeholder:text-Net-1-07 focus-visible:outline-none focus-visible:bg-white focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
               className,
               `${props.error && "border-red200"}`,
               type === "password" && "pr-10 placeholder:text-right",
