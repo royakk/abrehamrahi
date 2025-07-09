@@ -9,6 +9,11 @@ import PasswordPoliciesPopover from "../shared/PasswordPoliciesPopover";
 import { useState } from "react";
 import { ChangePasswordValidationSchema } from "../../schemaValidation";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { toast } from "sonner";
+import useLoginStore from "@/zustand/useLoginForms";
+import { authService } from "../../services";
+import { authToken } from "@/lib/storage";
+import { otpCode } from "../../storage";
 
 export const Password = () => {
   const navigate = useNavigate();
@@ -16,21 +21,36 @@ export const Password = () => {
   const [passwordPolicies, setPasswordPolicies] = useState<
     PasswordPolicyType[]
   >([]);
+  const { loginForms } = useLoginStore();
   const resolver = ChangePasswordValidationSchema(passwordPolicies);
-  const { control, handleSubmit, watch } = useForm<ChangePasswordReq>({
-    defaultValues: { code: "", password: "", refresh: "", new_password: "" },
-    resolver: yupResolver(resolver) as any,
-  });
+  const { control, handleSubmit, watch, formState } =
+    useForm<ChangePasswordReq>({
+      resolver: yupResolver(resolver) as any,
+    });
   const passwordValue = watch("password");
-  const onSubmit: SubmitHandler<ChangePasswordReq> = async (values) => {};
+  const onSubmit: SubmitHandler<ChangePasswordReq> = async ({
+    new_password,
+  }) => {
+    const refresh = authToken.get()?.refresh;
+    const otp = otpCode.get();
+    const { data, errors: changePassError } = await authService.changePassword({
+      code: loginForms?.code ?? otp,
+      refresh,
+      new_password,
+    });
+    if (data) {
+      toast("رمز عبور با موفقیت تغییر کرد");
+    } else toast(`${changePassError.detail}`);
+  };
   return (
     <div>
       <p className="flex rtl text-[22px] font-bold text-newblack800 mb-4">
         ورود به حساب کاربری
       </p>
-      <h2 className="flex rtl text-[14px] font-bold text-newblack500 mb-10">
+      <h2 className="flex rtl text-[14px] font-bold text-newblack500 mb-11">
         برای ورود لطفا شماره موبایل خط همراه اول خود را وارد کنید.
       </h2>
+
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col gap-6">
           <PasswordPoliciesPopover
@@ -49,7 +69,7 @@ export const Password = () => {
                   </Label>
                   <Input
                     {...field}
-                    className={` bg-newblack200 h-[48px]
+                    className={`  h-[48px]
               `}
                     error={fieldState.error?.message}
                     onFocus={() => setShowPolicies(true)}
@@ -73,7 +93,7 @@ export const Password = () => {
                 </Label>
                 <Input
                   {...field}
-                  className={` bg-newblack200 h-[48px]
+                  className={`  h-[48px]
               `}
                   type="password"
                   id="newPassword"
@@ -83,7 +103,10 @@ export const Password = () => {
               </div>
             )}
           />
-          <Button className="w-full mt-4 bg-primaryMain h-[48px] ">
+          <Button
+            disabled={formState.isSubmitting}
+            className="w-full mt-4 bg-primaryMain h-[48px] "
+          >
             ادامه
           </Button>
         </div>

@@ -14,14 +14,10 @@ import { PATH } from "@/lib/path";
 export const NumberPart = () => {
   const { setShowCaptcha, goToStep, showCaptch } = useLoginContext();
   const { setLoginForms, loginForms } = useLoginStore();
-
-  const { control, handleSubmit } = useForm<GenerateOtpReq>({
-    defaultValues: {
-      phone: "",
-      prefix: "+98",
-    },
-  });
+  console.log("oginForms?.phone", loginForms?.phone);
+  const { control, handleSubmit, formState } = useForm<GenerateOtpReq>();
   const navigate = useNavigate();
+
   const onSubmit: SubmitHandler<GenerateOtpReq> = async (values) => {
     const editedPhone =
       values?.phone && values?.phone.startsWith("0")
@@ -51,6 +47,9 @@ export const NumberPart = () => {
 
       if (!otpErrors) {
         goToStep("otp");
+        if (data?.captcha_required !== null) {
+          captchaTime.set(data);
+        }
       }
       if (data?.captcha_required !== null) {
         captchaTime.set(data);
@@ -83,19 +82,24 @@ export const NumberPart = () => {
               </Label>
               <Input
                 {...field}
-                className={`ltr bg-newblack200
+                className={`ltr h-[48px]
               `}
                 type="text"
                 id="phone"
                 placeholder="9** *** ***"
                 error={fieldState.error?.message}
               />
-
-              <Button className="mt-8 bg-primaryMain h-[48px] ">ورود</Button>
             </div>
           )}
         />
+        <Button
+          disabled={formState.isSubmitting}
+          className="mt-8 w-full bg-primaryMain h-[48px] "
+        >
+          ورود
+        </Button>
       </form>
+
       <div className="flex text-start rtl mt-6 gap-4 ">
         <p className="text-sm font-medium">حساب کاربری ندارید؟</p>
         <button

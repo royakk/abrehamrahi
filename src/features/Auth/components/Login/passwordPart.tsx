@@ -83,7 +83,7 @@ export const PasswordPart = () => {
           </h1>
         </div>
         <h2 className="flex rtl text-[14px] font-bold text-newblack500 mb-11">
-          برای ورود لطفا شماره موبایل خط همراه اول خود را وارد کنید.
+          برای ورود لطفا پسورد را وارد کنید.
         </h2>
       </div>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -104,7 +104,7 @@ export const PasswordPart = () => {
                     {...field}
                     id="password"
                     type={showPassword ? "text" : "password"}
-                    className={`ltr pr-10 `}
+                    className={`ltr pr-10 h-[48px] `}
                     error={fieldState.error?.message}
                   />
                 </div>

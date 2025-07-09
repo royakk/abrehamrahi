@@ -11,7 +11,7 @@ import { CaptchDialog } from "../shared/captchDialog";
 import { useNavigate } from "react-router";
 import { PATH } from "@/lib/path";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { regexPhone } from "@/lib/utils";
 
 export const CreateAcount = () => {
@@ -20,12 +20,16 @@ export const CreateAcount = () => {
   const [confirm, setConfirm] = useState(false);
   const [isPending, setIspending] = useState(false);
 
-  const { control, handleSubmit } = useForm<GenerateOtpReq>({
+  const { control, handleSubmit, setValue } = useForm<GenerateOtpReq>({
     defaultValues: {
       phone: "",
       prefix: "+98",
     },
   });
+  useEffect(() => {
+    const phoneWithZero = "0" + loginForms?.phone;
+    setValue("phone", phoneWithZero);
+  }, []);
   const navigate = useNavigate();
   const onSubmit: SubmitHandler<GenerateOtpReq> = async (values) => {
     const editedPhone =

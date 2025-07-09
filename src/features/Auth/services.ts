@@ -6,6 +6,7 @@ import {
 import { API } from "@/lib/path";
 import type {
   Captcha,
+  ChangePasswordReq,
   GenerateOtpReq,
   GenerateOtpRes,
   LoginReq,
@@ -63,6 +64,15 @@ class AuthServices {
     return await axiosService(
       API.configuration.getPasswordPolicy,
       AxiosServiceMethod.GET
+    );
+  }
+  async changePassword(
+    changePassReq: ChangePasswordReq
+  ): Promise<AxiosServiceResponse<undefined>> {
+    return await axiosService(
+      API.profile.changePassword,
+      AxiosServiceMethod.POST,
+      { ...changePassReq }
     );
   }
 }

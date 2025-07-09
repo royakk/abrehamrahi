@@ -19,6 +19,7 @@ const API = {
     refreshToken: "v2/profile/auth/token-refresh/",
     register: "/vsaas/api/v1/profile/register/",
     getProfile: "v6/profile/auth/get-profile/",
+    changePassword: "/v2/profile/auth/change-password/",
   },
 };
 export { API, PATH };

@@ -56,9 +56,9 @@ export interface LoginRes {
 }
 export type ChangePasswordReq = {
   refresh?: string;
-  code?: string;
+  code?: number;
   new_password: string;
-  password: string;
+  password?: string;
 };
 export type PasswordPolicyType = {
   pattern: RegExp;

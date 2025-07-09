@@ -27,7 +27,7 @@ const RegisterFlowComponent = () => {
           {step === "otp" && <OtpCode isRegister />}
         </CardContent>
         <div className="flex justify-center lg:hidden">
-          <CardFooter>
+          <CardFooter className="mt-10">
             <MenoLogin sm />
           </CardFooter>
         </div>

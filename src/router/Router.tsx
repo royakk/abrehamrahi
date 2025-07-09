@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router";
 import useAuthStore from "../zustand/useAuthStore";
 import { Login } from "../pages/Auth/login";
 import { ProfilePage } from "../pages/Auth/profile";
@@ -9,26 +9,38 @@ import { ChangePasswordPage } from "@/pages/Auth/ChangePassword";
 import { RegisterPage } from "@/pages/Auth/Register";
 
 export default function Router() {
-  const user = useAuthStore((state) => state.user);
+  const { user, setUser } = useAuthStore((state) => state);
+
   useCheckLogin();
 
   return (
-    <Routes>
+    <>
       {user ? (
-        <>
-          <Route path={PATH.profile} element={<ProfilePage />} />
-          <Route path={PATH.login} element={<Navigate to="/" replace />} />
+        <Routes>
           <Route path={PATH.changePassword} element={<ChangePasswordPage />} />
-        </>
+          <Route path={PATH.profile} element={<ProfilePage />} />
+        </Routes>
       ) : user === null ? (
-        <>
-          <Route path={PATH.login} element={<Login />} />
+        <Routes>
           <Route path={PATH.register} element={<RegisterPage />} />
-          <Route path="*" element={<Navigate to={PATH.login} replace />} />
-        </>
+          <Route path={PATH.login} element={<Login />} />
+          {/* <Route  path="*" element={<Navigate to={PATH.login} replace />} /> */}
+        </Routes>
       ) : (
-        <Route path="*" element={<Loading />} />
+        <Loading />
       )}
-    </Routes>
+    </>
+
+    // <Routes>
+    //     {/* <Route element={<ProtectedRoute />}>
+    //       <Route path={PATH.profile} element={<ProfilePage />} />
+    //       <Route path={PATH.changePassword} element={<ChangePasswordPage />} />
+    //     </Route>
+
+    //     <Route path={PATH.register} element={<RegisterPage />} />
+    //     <Route path={PATH.login} element={<Login />} />
+
+    //     <Route path="*" element={<Navigate to={PATH.login} replace />} />
+    //   </Routes> */}
   );
 }
