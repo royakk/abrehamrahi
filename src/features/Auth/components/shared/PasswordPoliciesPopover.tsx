@@ -26,8 +26,6 @@ const PasswordPoliciesPopover = ({
     const handleGetPasswordPolicies = async () => {
       const { data, errors } = await authService.getPasswordPolicies();
       if (data) {
-        toast(`${data}`);
-
         setPasswordPolicies(data.regexes);
       } else toast(`${errors}`);
     };

@@ -10,14 +10,20 @@ import useLoginStore from "@/zustand/useLoginForms";
 import { CaptchDialog } from "../shared/captchDialog";
 import { useNavigate } from "react-router";
 import { PATH } from "@/lib/path";
+import { useEffect } from "react";
 
 export const NumberPart = () => {
   const { setShowCaptcha, goToStep, showCaptch } = useLoginContext();
   const { setLoginForms, loginForms } = useLoginStore();
-  console.log("oginForms?.phone", loginForms?.phone);
-  const { control, handleSubmit, formState } = useForm<GenerateOtpReq>();
+  const { control, handleSubmit, formState, setValue } =
+    useForm<GenerateOtpReq>();
   const navigate = useNavigate();
-
+  useEffect(() => {
+    if (loginForms?.phone) {
+      const phoneWithZero = "0" + loginForms?.phone;
+      setValue("phone", phoneWithZero);
+    }
+  }, []);
   const onSubmit: SubmitHandler<GenerateOtpReq> = async (values) => {
     const editedPhone =
       values?.phone && values?.phone.startsWith("0")

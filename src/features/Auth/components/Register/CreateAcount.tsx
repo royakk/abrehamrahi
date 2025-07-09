@@ -52,7 +52,7 @@ export const CreateAcount = () => {
       setIspending(true);
       const {
         data,
-        status,
+
         errors: otpErrors,
       } = await authService.generateOtp({
         ...values,

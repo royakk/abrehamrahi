@@ -44,7 +44,10 @@ export const OtpCode = ({ isRegister }: OtpCodeProps) => {
       setIsTimerActive(false);
     }
   }, [isTimerActive, countdown]);
-
+  useEffect(() => {
+    if (formState.errors.code?.message)
+      toast(`${formState.errors.code?.message}`);
+  }, [formState.errors.code]);
   const handleResendCode = async () => {
     const captchaInLocalStorage = getValidCaptcha();
     if (captchaInLocalStorage) {
@@ -161,7 +164,7 @@ export const OtpCode = ({ isRegister }: OtpCodeProps) => {
         </div>
 
         <Button
-          disabled={formState.isSubmitting}
+          disabled={formState.isSubmitting || !formState.isDirty}
           className="mt-5 w-full bg-primaryMain h-[48px]"
         >
           تایید کد ارسالی
