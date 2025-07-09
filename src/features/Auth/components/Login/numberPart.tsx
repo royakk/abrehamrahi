@@ -8,9 +8,10 @@ import { captchaTime } from "../../storage";
 import { authService } from "../../services";
 import useLoginStore from "@/zustand/useLoginForms";
 import { CaptchDialog } from "../shared/captchDialog";
-import { useNavigate } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 import { PATH } from "@/lib/path";
 import { useEffect } from "react";
+import { Link } from "@/components/ui/Link";
 
 export const NumberPart = () => {
   const { setShowCaptcha, goToStep, showCaptch } = useLoginContext();
@@ -108,12 +109,7 @@ export const NumberPart = () => {
 
       <div className="flex text-start rtl mt-6 gap-4 ">
         <p className="text-sm font-medium">حساب کاربری ندارید؟</p>
-        <button
-          onClick={() => navigate(PATH.register)}
-          className="text-sm text-primaryMain cursor-pointer"
-        >
-          ثبت نام کنید
-        </button>
+        <Link to={PATH.register}>ثبت نام کنید</Link>
       </div>
       {showCaptch && <CaptchDialog onSubmit={handleSubmit(onSubmit)} />}
     </div>

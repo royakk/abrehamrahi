@@ -13,6 +13,7 @@ import { PATH } from "@/lib/path";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useEffect, useState } from "react";
 import { regexPhone } from "@/lib/utils";
+import { Link } from "@/components/ui/Link";
 
 export const CreateAcount = () => {
   const { setShowCaptcha, goToStep, showCaptch } = useLoginContext();
@@ -132,12 +133,7 @@ export const CreateAcount = () => {
       </form>
       <div className="flex text-start rtl mt-6 gap-4 ">
         <p className="text-sm font-medium"> قبلا ثبت نام کرده اید؟ </p>
-        <button
-          onClick={() => navigate(PATH.login)}
-          className="text-sm text-primaryMain cursor-pointer"
-        >
-          وارد شوید
-        </button>
+        <Link to={PATH.login}>وارد شوید</Link>
       </div>
       {showCaptch && <CaptchDialog onSubmit={handleSubmit(onSubmit)} />}
     </div>
