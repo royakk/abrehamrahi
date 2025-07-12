@@ -1,4 +1,4 @@
-import type { LinkPropsType } from "@/types";
+import type { LinkPropsType } from "@/Forms";
 import { NavLink } from "react-router";
 import { twMerge } from "tailwind-merge";
 
