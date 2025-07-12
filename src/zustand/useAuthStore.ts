@@ -16,14 +16,14 @@ import { create } from "zustand";
 // useAuthStore.ts
 
 interface AuthState {
-  user: UserViewModel | null;
+  user: UserViewModel | null | undefined;
   isLoading: boolean;
   setUser: (user: UserViewModel | null) => void;
   setLoading: (loading: boolean) => void;
 }
 
 const useAuthStore = create<AuthState>((set) => ({
-  user: null,
+  user: undefined,
   isLoading: true,
   setUser: (user) => set({ user }),
   setLoading: (isLoading) => set({ isLoading }),

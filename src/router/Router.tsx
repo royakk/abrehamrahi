@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router";
+import { Navigate, Route, Routes } from "react-router";
 import useAuthStore from "../zustand/useAuthStore";
 import { Login } from "../pages/Auth/login";
 import { ProfilePage } from "../pages/Auth/profile";
@@ -7,32 +7,43 @@ import { PATH } from "../lib/path";
 import Loading from "@/components/ui/loading";
 import { ChangePasswordPage } from "@/pages/Auth/ChangePassword";
 import { RegisterPage } from "@/pages/Auth/Register";
+// import ProtectedRoute from "./ProtectedRoutes";
 
 export default function Router() {
   const { user, setUser } = useAuthStore((state) => state);
 
   useCheckLogin();
+  if (user === undefined) {
+    return (
+      <Routes>
+        <Route path="*" element={<Loading />} />
+      </Routes>
+    );
+  }
 
   return (
     <>
-      {user ? (
-        <Routes>
-          <Route path={PATH.changePassword} element={<ChangePasswordPage />} />
-          <Route path={PATH.profile} element={<ProfilePage />} />
-        </Routes>
-      ) : user === null ? (
-        <Routes>
-          <Route path={PATH.register} element={<RegisterPage />} />
-          <Route path={PATH.login} element={<Login />} />
-          {/* <Route  path="*" element={<Navigate to={PATH.login} replace />} /> */}
-        </Routes>
-      ) : (
-        <Loading />
-      )}
+      <Routes>
+        {user ? (
+          <>
+            <Route
+              path={PATH.changePassword}
+              element={<ChangePasswordPage />}
+            />
+            <Route path={PATH.profile} element={<ProfilePage />} />
+            <Route path={PATH.login} element={<Navigate to={PATH.profile} />} />
+          </>
+        ) : (
+          <>
+            <Route path={PATH.register} element={<RegisterPage />} />
+            <Route path={PATH.login} element={<Login />} />
+          </>
+        )}
+      </Routes>
     </>
 
     // <Routes>
-    //     {/* <Route element={<ProtectedRoute />}>
+    //     <Route element={<ProtectedRoute />}>
     //       <Route path={PATH.profile} element={<ProfilePage />} />
     //       <Route path={PATH.changePassword} element={<ChangePasswordPage />} />
     //     </Route>
@@ -40,7 +51,7 @@ export default function Router() {
     //     <Route path={PATH.register} element={<RegisterPage />} />
     //     <Route path={PATH.login} element={<Login />} />
 
-    //     <Route path="*" element={<Navigate to={PATH.login} replace />} />
-    //   </Routes> */}
+    //     <Route path="*" element={<Loading/>} />
+    //   </Routes>
   );
 }

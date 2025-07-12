@@ -53,14 +53,12 @@ export const NumberPart = () => {
       });
 
       if (!otpErrors) {
-        goToStep("otp");
         if (data?.captcha_required !== null) {
           captchaTime.set(data);
         }
+        goToStep("otp");
       }
-      if (data?.captcha_required !== null) {
-        captchaTime.set(data);
-      }
+    
       if (otpErrors) {
         captchaTime.set(otpErrors);
         alert("کپچا نادرست است  ");
